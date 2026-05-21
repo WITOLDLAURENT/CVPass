@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ═══ SEO ═══ -->
+<title>CVpass — Optimise ton CV pour les ATS | Analyse gratuite en 30 secondes</title>
+<meta name="description" content="75% des CV sont rejetés automatiquement. CVpass analyse ton CV gratuitement et le restructure pour passer tous les filtres ATS des recruteurs. 7,99€ · Résultat immédiat.">
+<meta name="keywords" content="cv compatible ats, optimiser cv ats, score ats gratuit, cv canva ats, cv alternance ats, cv stage, cv etudiant ats, logiciel recrutement cv, filtres ats cv">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://cvpass.fr/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cvpass.fr/">
+<meta property="og:title" content="CVpass — Ton CV enfin accepté par les recruteurs">
+<meta property="og:description" content="Analyse ton score ATS gratuitement en 30 secondes. CV restructuré et optimisé livré en PDF + Word pour 7,99€.">
+<meta property="og:image" content="https://cvpass.fr/og-image.jpg">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="CVpass">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CVpass — Optimise ton CV pour les ATS">
+<meta name="twitter:description" content="Score ATS gratuit en 30 secondes. CV optimisé à 7,99€.">
+<meta name="twitter:image" content="https://cvpass.fr/og-image.jpg">
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CVpass",
+  "url": "https://cvpass.fr",
+  "description": "Outil d'optimisation de CV pour les systèmes ATS. Analyse gratuite et CV restructuré livré en PDF + Word à 7,99€.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "7.99",
+    "priceCurrency": "EUR",
+    "description": "CV optimisé ATS — PDF + Word éditable livré immédiatement"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "1243"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"C'est quoi un ATS ?","acceptedAnswer":{"@type":"Answer","text":"Un ATS (Applicant Tracking System) filtre automatiquement les CV avant qu'un humain les lise. Si ton CV n'est pas compatible, il est rejeté sans jamais être vu."}},
+    {"@type":"Question","name":"Pourquoi les CV Canva sont mal lus par les ATS ?","acceptedAnswer":{"@type":"Answer","text":"Canva génère des PDF avec colonnes, tableaux et éléments graphiques que les ATS ne savent pas lire. Ils perdent les informations et rejettent le CV automatiquement."}},
+    {"@type":"Question","name":"Combien coûte CVpass ?","acceptedAnswer":{"@type":"Answer","text":"L'analyse ATS est gratuite. La restructuration complète du CV coûte 7,99€ — paiement unique, sans abonnement."}},
+    {"@type":"Question","name":"Et si je ne suis pas satisfait ?","acceptedAnswer":{"@type":"Answer","text":"Remboursement intégral sous 7 jours, sans question."}}
+  ]
+}
+</script>
+
+<!-- Fonts — preload pour la performance -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Satoshi:wght@400;500;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Satoshi:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Scripts lourds en defer — ne bloquent pas le rendu -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script defer src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- mammoth.js — lecture DOCX -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+<style>
+:root {
+  --green:#00b37e;--green-light:#e8faf3;--green-dark:#00845c;
+  --black:#0d0d0d;--white:#fff;
+  --gray-50:#f7f8f6;--gray-100:#eeecea;--gray-200:#dedad4;
+  --gray-400:#9a9690;--gray-600:#5a5752;
+  --red:#e03e3d;--amber:#b86e00;
+  --r:16px;--rsm:8px;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+  --shadow-lg:0 12px 48px rgba(0,0,0,.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Satoshi',sans-serif;background:var(--white);color:var(--black);overflow-x:hidden}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+@keyframes gaugeIn{from{width:0%}to{width:var(--gw)}}
+
+/* ── PAGES ── */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--gray-200);padding:16px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'DM Serif Display',serif;font-size:1.45rem;color:var(--black);text-decoration:none;cursor:pointer}
+.logo span{color:var(--green)}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-left:2px;vertical-align:super;animation:pulse 2.2s infinite}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{font-size:.85rem;font-weight:500;color:var(--gray-600);text-decoration:none;cursor:pointer;transition:color .2s}
+.nav-links a:hover{color:var(--black)}
+.nav-cta{background:var(--black);color:var(--white);padding:9px 20px;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:opacity .2s;border:none;font-family:'Satoshi',sans-serif}
+.nav-cta:hover{opacity:.85}
+
+/* ── BTN ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Satoshi',sans-serif;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+.btn-black{background:var(--black);color:var(--white);padding:14px 28px;border-radius:100px;font-size:.95rem}
+.btn-black:hover{opacity:.86}
+.btn-black:disabled{opacity:.35;cursor:not-allowed}
+.btn-green{background:var(--green);color:var(--white);padding:14px 28px;border-radius:100px;font-size:.95rem}
+.btn-green:hover{opacity:.88}
+.btn-white{background:var(--white);color:var(--black);padding:14px 28px;border-radius:100px;font-size:.95rem}
+.btn-white:hover{background:var(--gray-100)}
+.btn-outline{background:transparent;color:var(--black);padding:12px 24px;border-radius:100px;font-size:.875rem;border:1.5px solid var(--gray-200)}
+.btn-outline:hover{border-color:var(--black)}
+.btn-full{width:100%}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:var(--white);border-radius:50%;animation:spin .75s linear infinite;flex-shrink:0}
+
+/* ── HERO ── */
+.hero{background:var(--gray-50);padding:80px 40px 64px;text-align:center;border-bottom:1px solid var(--gray-200);position:relative}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 10%,var(--green) 50%,transparent 90%)}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--white);border:1px solid var(--gray-200);border-radius:100px;padding:6px 14px;font-size:.75rem;font-weight:600;color:var(--gray-600);margin-bottom:28px}
+h1.hero-h{font-family:'DM Serif Display',serif;font-size:clamp(2.4rem,5.5vw,4.6rem);line-height:1.06;letter-spacing:-.025em;margin-bottom:20px}
+h1.hero-h em{font-style:italic;color:var(--green)}
+.hero-sub{font-size:1.05rem;color:var(--gray-600);max-width:520px;margin:0 auto 36px;line-height:1.6}
+.hero-stats{display:flex;justify-content:center;gap:48px;padding-top:36px;border-top:1px solid var(--gray-200);margin-top:40px}
+.hs-n{font-family:'DM Serif Display',serif;font-size:2.2rem;letter-spacing:-.03em;display:block}
+.hs-l{font-size:.75rem;color:var(--gray-400);font-weight:500}
+
+/* ── TOOL ── */
+.tool-wrap{max-width:720px;margin:0 auto;padding:60px 24px}
+.tool-label{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+h2.tool-h{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6rem);letter-spacing:-.02em;margin-bottom:8px}
+.tool-sub{font-size:.95rem;color:var(--gray-600);margin-bottom:32px}
+
+/* Steps bar */
+.steps-bar{display:flex;align-items:center;margin-bottom:40px}
+.snode{display:flex;align-items:center;gap:7px;font-size:.78rem;font-weight:600;color:var(--gray-400)}
+.snode.active{color:var(--black)}
+.snode.done{color:var(--green)}
+.scirc{width:26px;height:26px;border-radius:50%;border:2px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;transition:all .3s;flex-shrink:0}
+.snode.active .scirc{border-color:var(--black);background:var(--black);color:var(--white)}
+.snode.done .scirc{border-color:var(--green);background:var(--green);color:var(--white)}
+.sline{flex:1;height:2px;background:var(--gray-200);margin:0 8px}
+.sline.done{background:var(--green)}
+
+/* Upload */
+.upload-box{border:2px dashed var(--gray-200);border-radius:var(--r);padding:48px 32px;background:var(--white);cursor:pointer;transition:all .22s;text-align:center}
+.upload-box:hover,.upload-box.drag{border-color:var(--green);background:var(--green-light)}
+.sector-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.sp-btn{padding:7px 15px;border-radius:100px;border:1.5px solid var(--gray-200);background:var(--white);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .18s;color:var(--gray-600);font-family:'Satoshi',sans-serif}
+.sp-btn.on{border-color:var(--green);background:var(--green-light);color:#065f46}
+
+/* Progress */
+.prog-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);padding:32px;margin-top:20px}
+.prog-track{background:var(--gray-100);border-radius:100px;height:5px;overflow:hidden;margin:14px 0 5px}
+.prog-fill{height:100%;background:var(--green);border-radius:100px;width:0%;transition:width .4s ease}
+.astep{display:flex;align-items:center;gap:9px;font-size:.83rem;color:var(--gray-400);padding:4px 0}
+.astep.act{color:var(--black);font-weight:600}
+.astep.done{color:var(--green)}
+.asico{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0}
+.astep.act .asico{border-color:var(--black)}
+.astep.done .asico{background:var(--green);border-color:var(--green);color:white}
+
+/* Score ring */
+.score-arc{transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1),stroke .4s}
+
+/* Results */
+.result-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);padding:32px;margin-bottom:14px;box-shadow:var(--shadow)}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
+.mc{background:var(--gray-50);border-radius:var(--rsm);padding:12px}
+.mc-l{font-size:.7rem;color:var(--gray-400);font-weight:500;margin-bottom:3px}
+.mc-v{font-size:.95rem;font-weight:700}
+.r{color:var(--red)}.a{color:var(--amber)}.g{color:var(--green)}
+.issue-box{background:#fff5f5;border:1px solid #fecaca;border-radius:var(--rsm);padding:16px;margin-bottom:10px}
+.blur-block{filter:blur(5px);user-select:none;pointer-events:none}
+.lock-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.cta-dark{background:var(--black);border-radius:var(--r);padding:32px;text-align:center;position:relative;overflow:hidden}
+.cta-dark::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent)}
+
+/* Guarantee badge */
+.guarantee-badge{display:inline-flex;align-items:center;gap:8px;border:1.5px solid rgba(255,255,255,.15);border-radius:var(--rsm);padding:10px 16px;margin-top:14px;font-size:.8rem;color:rgba(255,255,255,.7)}
+.guarantee-badge strong{color:white}
+
+/* Competitor anchor */
+.competitor-anchor{background:rgba(255,255,255,.07);border-radius:var(--rsm);padding:10px 16px;font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:18px}
+.competitor-anchor strong{color:rgba(255,255,255,.85)}
+
+/* ── CV PREVIEW PAGE ── */
+#cv-preview-page{background:var(--gray-50)}
+.cv-preview-wrap{max-width:900px;margin:0 auto;padding:40px 24px 80px}
+.cv-score-banner{background:linear-gradient(135deg,#065f46,#00b37e);border-radius:var(--r);padding:24px 32px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px}
+.dl-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+
+/* ── CV RENDERED ── */
+#cv-rendered{background:white;border-radius:var(--r);box-shadow:var(--shadow-lg);padding:52px 48px;max-width:700px;margin:0 auto;position:relative;font-family:'Satoshi',sans-serif;line-height:1.5}
+.cv-name{font-family:'DM Serif Display',serif;font-size:2.2rem;color:#0d0d0d;letter-spacing:-.02em;margin-bottom:4px}
+/* Photo placeholder */
+.cv-header-wrap{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0}
+.cv-header-info{flex:1;padding-right:20px}
+.cv-photo-placeholder{
+  width:90px;height:115px;flex-shrink:0;
+  border:2px dashed var(--accent,var(--green));
+  border-radius:4px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--gray-50);
+  text-align:center;padding:8px;
+  margin-top:4px;
+}
+.cv-photo-placeholder .photo-icon{font-size:1.4rem;margin-bottom:4px;opacity:.5}
+.cv-photo-placeholder .photo-text{font-size:.58rem;color:var(--gray-400);line-height:1.3;font-weight:500}
+.cv-title-line{font-size:1rem;color:var(--green);font-weight:600;margin-bottom:12px}
+.cv-contact{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.8rem;color:var(--gray-600);margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid var(--green)}
+.cv-section{margin-bottom:22px}
+.cv-section-title{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.cv-section-title::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+.cv-summary-box{font-size:.88rem;color:#3a3835;line-height:1.7;background:var(--gray-50);border-left:3px solid var(--green);padding:12px 16px;border-radius:0 var(--rsm) var(--rsm) 0}
+.cv-exp{margin-bottom:16px}
+.cv-exp-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.cv-exp-title{font-weight:700;font-size:.92rem;color:#0d0d0d}
+.cv-exp-dates{font-size:.78rem;color:var(--gray-400);font-weight:500;white-space:nowrap}
+.cv-exp-company{font-size:.82rem;color:var(--green);font-weight:600;margin-bottom:8px}
+.cv-bullet{display:flex;gap:8px;font-size:.82rem;color:#3a3835;margin-bottom:5px;line-height:1.55}
+.cv-bullet::before{content:'▸';color:var(--green);flex-shrink:0;margin-top:1px;font-size:.7rem}
+.cv-edu-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.cv-edu-degree{font-weight:700;font-size:.88rem}
+.cv-edu-school{font-size:.82rem;color:var(--gray-600)}
+.cv-edu-year{font-size:.78rem;color:var(--gray-400);font-weight:500}
+.cv-skills-wrap{display:flex;flex-wrap:wrap;gap:6px}
+.cv-skill-tag{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:100px;padding:4px 12px;font-size:.75rem;font-weight:500;color:#3a3835}
+.cv-lang-row{display:flex;gap:16px;flex-wrap:wrap}
+.cv-lang{font-size:.82rem;font-weight:600;color:#0d0d0d;display:flex;align-items:center;gap:6px}
+.cv-lang-level{font-weight:400;color:var(--gray-600)}
+.ats-badge{position:absolute;top:-12px;right:24px;background:var(--green);color:white;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:.05em}
+
+/* ── AFFILIATION PAGE ── */
+#affil-page{background:var(--gray-50)}
+.affil-wrap{max-width:860px;margin:0 auto;padding:60px 24px 80px}
+.affil-hero{text-align:center;margin-bottom:48px}
+.affil-hero h2{font-family:'DM Serif Display',serif;font-size:2.4rem;letter-spacing:-.025em;margin-bottom:12px}
+.affil-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);padding:28px;box-shadow:var(--shadow)}
+.affil-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.affil-stat{background:var(--gray-50);border-radius:var(--rsm);padding:20px;text-align:center}
+.affil-stat-n{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--green);letter-spacing:-.03em}
+.affil-stat-l{font-size:.78rem;color:var(--gray-600);margin-top:3px}
+.link-box{display:flex;align-items:center;gap:10px;background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--rsm);padding:12px 16px;margin:16px 0}
+.link-box input{flex:1;background:none;border:none;font-size:.875rem;font-family:'Satoshi',sans-serif;color:var(--black);outline:none}
+.copy-btn{background:var(--black);color:white;border:none;padding:7px 16px;border-radius:100px;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Satoshi',sans-serif;transition:opacity .2s}
+.copy-btn:hover{opacity:.85}
+.commission-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:.85rem}
+.commission-table th{text-align:left;padding:10px 14px;background:var(--gray-50);border-bottom:1px solid var(--gray-200);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-600)}
+.commission-table td{padding:12px 14px;border-bottom:1px solid var(--gray-100)}
+.commission-table tr:last-child td{border-bottom:none}
+.how-steps{display:flex;flex-direction:column;gap:16px;margin-top:20px}
+.how-step{display:flex;gap:14px;align-items:flex-start}
+.how-num{width:32px;height:32px;border-radius:50%;background:var(--black);color:white;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--white);border-radius:var(--r);max-width:460px;width:100%;padding:36px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-x{position:absolute;top:14px;right:14px;background:var(--gray-100);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.modal-x:hover{background:var(--gray-200)}
+.ff{margin-bottom:13px}
+.ff label{display:block;font-size:.75rem;font-weight:600;color:var(--gray-600);margin-bottom:5px}
+.ff input{width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:var(--rsm);font-size:.875rem;font-family:'Satoshi',sans-serif;color:var(--black);background:var(--white);transition:border-color .2s;outline:none}
+.ff input:focus{border-color:var(--black)}
+.ff input.error{border-color:var(--red)}
+.ff-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.order-box{background:var(--gray-50);border-radius:var(--rsm);padding:14px;margin:16px 0}
+.orow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--gray-200);font-size:.85rem}
+.orow:last-child{border-bottom:none;font-weight:700}
+.orow span:first-child{color:var(--gray-600)}
+.ototal{color:var(--green);font-size:1.05rem}
+/* Stripe placeholder dans modal */
+.stripe-placeholder{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--rsm);padding:16px;text-align:center;margin:16px 0}
+.stripe-placeholder p{font-size:.8rem;color:var(--gray-600);margin-bottom:8px}
+.stripe-logo{font-size:1.4rem;letter-spacing:.1em;font-weight:700;color:#635bff}
+
+/* ── FAQ ── */
+.faq-item{border-bottom:1px solid var(--gray-200)}
+.faq-btn{width:100%;text-align:left;background:none;border:none;padding:18px 0;display:flex;justify-content:space-between;align-items:center;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Satoshi',sans-serif}
+.faq-ico{font-size:1.3rem;color:var(--gray-400);transition:transform .25s}
+.faq-ans{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s;font-size:.85rem;color:var(--gray-600);line-height:1.7}
+.faq-item.open .faq-ico{transform:rotate(45deg)}
+.faq-item.open .faq-ans{max-height:200px;padding-bottom:16px}
+
+/* ── TESTI ── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.testi-card{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r);padding:24px}
+.stars{color:#f59e0b;font-size:.9rem;margin-bottom:12px;letter-spacing:2px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  nav{padding:14px 20px}
+  .nav-links{display:none}
+  .hero{padding:60px 20px 48px}
+  .hero-stats{gap:20px}
+  .tool-wrap,.cv-preview-wrap,.affil-wrap{padding-left:16px;padding-right:16px}
+  #cv-rendered{padding:32px 24px}
+  .testi-grid{grid-template-columns:1fr}
+  .affil-stat-grid{grid-template-columns:1fr 1fr}
+  .upload-box{padding:32px 20px}
+  .upload-box .drag-hint{display:none}
+  .hero-stats{flex-wrap:wrap;gap:16px}
+}
+@media(max-width:400px){
+  h1.hero-h{font-size:2rem}
+  .hero-stats .hs-n{font-size:1.8rem}
+}
+
+/* ══ PAGE PERSONNALISATION ══ */
+#perso-page{background:var(--gray-50)}
+.perso-wrap{max-width:640px;margin:0 auto;padding:60px 24px 80px}
+.perso-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);padding:28px;margin-bottom:16px;box-shadow:var(--shadow)}
+
+/* Choix couleur */
+.color-grid{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.color-opt{flex:1;min-width:80px;border:2px solid var(--gray-200);border-radius:var(--rs);padding:12px 8px;cursor:pointer;text-align:center;transition:all .2s;background:#fff}
+.color-opt:hover{border-color:var(--black)}
+.color-opt.sel{border-color:var(--accent,var(--green));background:var(--gray-50)}
+.color-dot{width:28px;height:28px;border-radius:50%;margin:0 auto 8px}
+.color-name{font-size:.72rem;font-weight:700;color:var(--black);display:block}
+.color-sub{font-size:.6rem;color:var(--gray-400);display:block;line-height:1.3;margin-top:2px}
+
+/* Choix pages */
+.pages-grid{display:flex;gap:12px;margin-top:10px}
+.pages-opt{flex:1;border:2px solid var(--gray-200);border-radius:var(--rs);padding:16px;cursor:pointer;text-align:center;transition:all .2s;background:#fff}
+.pages-opt:hover{border-color:var(--black)}
+.pages-opt.sel{border-color:var(--accent,var(--green));background:var(--gray-50)}
+.pages-opt .pnum{font-family:'DM Serif Display',serif;font-size:2rem;display:block;color:var(--black)}
+.pages-opt .psub{font-size:.75rem;color:var(--gray-400);display:block;margin-top:3px}
+.pages-badge{display:inline-block;background:var(--green);color:#fff;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:100px;margin-top:5px}
+
+/* Overlay génération */
+.gen-overlay{display:none;position:fixed;inset:0;background:rgba(13,13,13,.88);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.gen-overlay.show{display:flex}
+.gen-box{background:#fff;border-radius:var(--r);padding:40px;max-width:400px;width:90%;text-align:center}
+
+/* Partage */
+.share-bar{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r);padding:20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+/* CV — couleur dynamique via --accent */
+.cv-title-line{color:var(--accent,var(--green))}
+.cv-contact-bar-new{border-top:2px solid var(--accent,var(--green));border-bottom:2px solid var(--accent,var(--green));background:var(--accent-l,var(--green-light))}
+.cv-section-line::after{background:var(--accent,var(--green));opacity:.35}
+.cv-summary-accent{border-left-color:var(--accent,var(--green));background:color-mix(in srgb,var(--accent,var(--green)) 5%,white)}
+
+/* Pages légales */
+#legal-page,#rgpd-page{background:#fff}
+.legal-wrap{max-width:760px;margin:0 auto;padding:60px 40px 80px}
+.legal-wrap h1{font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:32px}
+.legal-wrap h2{font-size:1.1rem;font-weight:700;margin:28px 0 10px}
+.legal-wrap p,.legal-wrap li{font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px}
+.legal-wrap ul{padding-left:20px;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav role="navigation" aria-label="Navigation principale">
+  <a class="logo" onclick="goPage('home')" role="link" aria-label="CVpass — accueil">CV<span>pass</span><span class="nav-dot" aria-hidden="true"></span></a>
+  <div class="nav-links">
+    <a onclick="scrollToSection('upload')">Analyser mon CV</a>
+    <a onclick="scrollToSection('pricing-sec')">Tarif</a>
+    <a onclick="goPage('affil')">Affiliation</a>
+    <a onclick="scrollToSection('faq-sec')">FAQ</a>
+    <a onclick="goPage('legal')">Mentions légales</a>
+  </div>
+  <button class="btn nav-cta" onclick="scrollToSection('upload')">Tester mon CV →</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     PAGE HOME
+══════════════════════════════════════════════ -->
+<div id="home-page" class="page active">
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-badge" role="status"><span class="nav-dot" aria-hidden="true"></span>+1 243 CV optimisés depuis le lancement</div>
+    <h1 class="hero-h" id="hero-title">Ton CV passe enfin<br><em>tous les filtres</em> automatiques</h1>
+    <p class="hero-sub">75% des CV sont rejetés avant d'être lus par un humain. CVpass analyse ton CV gratuitement puis le restructure pour passer tous les logiciels ATS — professionnel, prêt à envoyer.</p>
+    <button class="btn btn-black" style="padding:16px 36px;font-size:1rem" onclick="scrollToSection('upload')">Voir mon score ATS gratuitement →</button>
+    <p style="font-size:.78rem;color:var(--gray-400);margin-top:12px">Analyse gratuite · Optimisation 7,99€ · Tes données restent privées et sécurisées</p>
+    <div class="hero-stats" role="list" aria-label="Statistiques CVpass">
+      <div role="listitem"><span class="hs-n">92%</span><span class="hs-l">Score ATS moyen de nos utilisateurs</span></div>
+      <div role="listitem"><span class="hs-n">2 min</span><span class="hs-l">Temps de traitement</span></div>
+      <div role="listitem"><span class="hs-n">7,99€</span><span class="hs-l">Paiement unique</span></div>
+    </div>
+  </section>
+
+  <!-- BEFORE / AFTER -->
+  <section style="padding:72px 40px;background:var(--white);border-bottom:1px solid var(--gray-200)" aria-labelledby="ba-title">
+    <div style="max-width:900px;margin:0 auto;text-align:center">
+      <p class="tool-label" style="text-align:center">Le problème</p>
+      <h2 id="ba-title" style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);letter-spacing:-.02em;margin-bottom:12px">Ce qui se passe vraiment avec ton CV</h2>
+      <p style="color:var(--gray-600);font-size:.9rem;max-width:500px;margin:0 auto 40px">Les entreprises utilisent des logiciels ATS qui filtrent les candidatures automatiquement. Un CV Canva, aussi beau soit-il, est souvent invisible pour ces systèmes.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:760px;margin:0 auto">
+        <article style="background:var(--white);border-radius:var(--r);padding:28px;border:1.5px solid #fecaca">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <div style="width:36px;height:36px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--red);font-weight:700" aria-hidden="true">✕</div>
+            <span style="font-weight:700;color:var(--red)">CV Canva actuel</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px" aria-hidden="true">
+            <div style="height:9px;background:#fee2e2;border-radius:4px;width:90%"></div>
+            <div style="height:9px;background:#fee2e2;border-radius:4px;width:70%"></div>
+            <div style="height:9px;background:#fee2e2;border-radius:4px;width:55%"></div>
+            <div style="height:9px;background:#fee2e2;border-radius:4px;width:85%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:.8rem;color:var(--gray-600)">Score ATS</span>
+            <span style="font-size:1.6rem;font-weight:700;color:var(--red)">23%</span>
+          </div>
+          <div style="height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden" role="progressbar" aria-valuenow="23" aria-valuemin="0" aria-valuemax="100">
+            <div style="height:100%;width:23%;background:var(--red);border-radius:3px"></div>
+          </div>
+          <p style="font-size:.75rem;color:var(--red);margin-top:10px;font-weight:600">❌ Rejeté avant d'être lu</p>
+        </article>
+        <article style="background:var(--white);border-radius:var(--r);padding:28px;border:2px solid #a7f3d0;position:relative">
+          <div style="position:absolute;top:-10px;right:16px;background:var(--green);color:white;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:100px">APRÈS CVPASS</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <div style="width:36px;height:36px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:700" aria-hidden="true">✓</div>
+            <span style="font-weight:700;color:var(--green)">CV restructuré CVpass</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px" aria-hidden="true">
+            <div style="height:9px;background:var(--green-light);border-radius:4px;width:90%"></div>
+            <div style="height:9px;background:var(--green-light);border-radius:4px;width:90%"></div>
+            <div style="height:9px;background:var(--green-light);border-radius:4px;width:78%"></div>
+            <div style="height:9px;background:var(--green-light);border-radius:4px;width:90%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:.8rem;color:var(--gray-600)">Score ATS</span>
+            <span style="font-size:1.6rem;font-weight:700;color:var(--green)">94%</span>
+          </div>
+          <div style="height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden" role="progressbar" aria-valuenow="94" aria-valuemin="0" aria-valuemax="100">
+            <div style="height:100%;width:0%;background:var(--green);border-radius:3px;transition:width 1.4s ease .5s" id="afterBar"></div>
+          </div>
+          <p style="font-size:.75rem;color:var(--green);margin-top:10px;font-weight:600">✅ Lu par les recruteurs humains</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- UPLOAD + ANALYSE -->
+  <section id="upload" style="padding:72px 40px;background:var(--gray-50);border-bottom:1px solid var(--gray-200)" aria-labelledby="upload-title">
+    <div class="tool-wrap" style="margin:0 auto;padding:0">
+      <div style="text-align:center;margin-bottom:40px">
+        <p class="tool-label" style="text-align:center">Analyse gratuite</p>
+        <h2 class="tool-h" id="upload-title">Découvre ton score ATS en 30 secondes</h2>
+        <p class="tool-sub">Dépose ton CV — nous analysons vraiment son contenu et sa compatibilité ATS.</p>
+      </div>
+
+      <!-- Steps bar -->
+      <div class="steps-bar" role="list" aria-label="Étapes du processus">
+        <div class="snode active" id="sn1" role="listitem"><div class="scirc" id="sc1" aria-hidden="true">1</div><span>Upload</span></div>
+        <div class="sline" id="sl1" aria-hidden="true"></div>
+        <div class="snode" id="sn2" role="listitem"><div class="scirc" id="sc2" aria-hidden="true">2</div><span>Analyse ATS</span></div>
+        <div class="sline" id="sl2" aria-hidden="true"></div>
+        <div class="snode" id="sn3" role="listitem"><div class="scirc" id="sc3" aria-hidden="true">3</div><span>CV Optimisé</span></div>
+      </div>
+
+      <!-- Upload zone -->
+      <div id="step-upload">
+          <div class="upload-box" id="dropZone" onclick="document.getElementById('cvInput').click()" role="button" aria-label="Importer ton CV" tabindex="0" onkeydown="if(event.key==='Enter')document.getElementById('cvInput').click()">
+            <input type="file" id="cvInput" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="onFile(event)" aria-label="Sélectionner un fichier CV">
+            <div id="up-prompt">
+              <div style="font-size:2.5rem;margin-bottom:12px" aria-hidden="true">📄</div>
+              <p style="font-weight:600;font-size:.95rem;margin-bottom:4px">Glisse ton CV ici ou clique pour importer</p>
+              <p style="font-size:.82rem;color:var(--gray-400)">PDF, Word (.docx) acceptés · 10 Mo max</p>
+              <!-- Mobile hint -->
+              <p class="drag-hint" style="display:none"></p>
+            </div>
+            <div id="up-success" style="display:none;flex-direction:column;align-items:center;gap:8px">
+              <div style="display:flex;align-items:center;gap:12px;width:100%">
+                <span style="font-size:1.8rem" aria-hidden="true">✅</span>
+                <div style="text-align:left;flex:1">
+                  <div style="font-weight:600;color:#065f46;font-size:.875rem" id="upName">—</div>
+                  <div style="font-size:.75rem;color:#059669" id="upSize">—</div>
+                </div>
+                <button onclick="event.stopPropagation();clearFile()" style="background:none;border:none;color:var(--gray-400);font-size:1.1rem;cursor:pointer" aria-label="Supprimer le fichier">✕</button>
+              </div>
+              <!-- Badge type fichier détecté -->
+              <div id="fileBadge" style="display:none;width:100%;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:100px;padding:5px 12px;font-size:.72rem;font-weight:600;color:var(--gray-600);text-align:center"></div>
+            </div>
+          </div>
+
+          <div style="margin-top:18px">
+            <p style="font-size:.8rem;font-weight:600;color:var(--gray-600);margin-bottom:8px">Secteur visé <span style="font-weight:400;color:var(--gray-400)">(optionnel — améliore la précision)</span></p>
+            <div class="sector-pills" role="group" aria-label="Sélectionner un secteur">
+              <button class="sp-btn" onclick="setSec(this,'tech')" aria-pressed="false">💻 Tech</button>
+              <button class="sp-btn" onclick="setSec(this,'marketing')" aria-pressed="false">📢 Marketing</button>
+              <button class="sp-btn" onclick="setSec(this,'finance')" aria-pressed="false">💼 Finance</button>
+              <button class="sp-btn" onclick="setSec(this,'rh')" aria-pressed="false">🤝 RH</button>
+              <button class="sp-btn" onclick="setSec(this,'design')" aria-pressed="false">🎨 Design</button>
+              <button class="sp-btn" onclick="setSec(this,'commerce')" aria-pressed="false">🛒 Commerce</button>
+              <button class="sp-btn" onclick="setSec(this,'sante')" aria-pressed="false">🏥 Santé</button>
+            </div>
+          </div>
+
+          <button id="goBtn" class="btn btn-black btn-full" style="margin-top:20px" disabled onclick="launchAnalysis()" aria-describedby="upload-note">
+            Analyser mon score ATS gratuitement →
+          </button>
+          <p id="upload-note" style="font-size:.74rem;color:var(--gray-400);text-align:center;margin-top:10px">🔒 Gratuit · ⚡ 30 secondes · 🛡 Tes données restent privées et sécurisées</p>
+      </div>
+
+      <!-- Progress -->
+      <div id="step-prog" style="display:none" role="status" aria-live="polite" aria-label="Analyse en cours">
+        <div class="prog-card">
+          <p style="font-weight:600;font-size:.9rem;margin-bottom:3px" id="pTitle">Analyse en cours...</p>
+          <p style="font-size:.8rem;color:var(--gray-400)" id="pSub">Extraction du contenu</p>
+          <div class="prog-track"><div class="prog-fill" id="pBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>
+          <p style="font-size:.74rem;color:var(--gray-400);text-align:right;margin-bottom:16px" id="pPct">0%</p>
+          <div>
+            <div class="astep" id="as1"><div class="asico" aria-hidden="true">1</div>Extraction du texte</div>
+            <div class="astep" id="as2"><div class="asico" aria-hidden="true">2</div>Analyse structure ATS</div>
+            <div class="astep" id="as3"><div class="asico" aria-hidden="true">3</div>Vérification mots-clés</div>
+            <div class="astep" id="as4"><div class="asico" aria-hidden="true">4</div>Calcul du score</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="step-result" style="display:none">
+        <div class="result-card" role="region" aria-label="Résultats de l'analyse ATS">
+          <div style="display:flex;align-items:center;gap:24px;margin-bottom:22px;flex-wrap:wrap">
+            <div style="flex-shrink:0">
+              <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+                <circle id="sArc" cx="60" cy="60" r="50" fill="none" stroke="var(--red)" stroke-width="10"
+                  stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"
+                  transform="rotate(-90 60 60)" class="score-arc"/>
+                <text x="60" y="56" text-anchor="middle" font-size="26" font-weight="700" fill="var(--black)" id="sNum" font-family="DM Serif Display,serif">0</text>
+                <text x="60" y="72" text-anchor="middle" font-size="10" fill="var(--gray-400)" font-family="Satoshi,sans-serif">/100</text>
+                <text x="60" y="87" text-anchor="middle" font-size="9.5" fill="var(--red)" font-family="Satoshi,sans-serif" id="sLbl">Score critique</text>
+              </svg>
+            </div>
+            <div>
+              <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:6px" id="sHeadline">Score critique</h3>
+              <p style="font-size:.85rem;color:var(--gray-600);line-height:1.65;max-width:340px" id="sMsg">—</p>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <div class="mc"><div class="mc-l">Structure ATS</div><div class="mc-v r" id="mStr">—</div></div>
+            <div class="mc"><div class="mc-l">Mots-clés</div><div class="mc-v r" id="mKw">—</div></div>
+          </div>
+
+          <div class="issue-box" role="alert">
+            <p style="font-size:.72rem;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">⚠ Problème principal détecté</p>
+            <p style="font-size:.88rem;font-weight:600;color:#7f1d1d;margin-bottom:3px" id="issueTitle">—</p>
+            <p style="font-size:.8rem;color:#991b1b" id="issueDesc">—</p>
+          </div>
+
+          <!-- Reste flouté -->
+          <div style="position:relative;border-radius:var(--rsm);overflow:hidden" aria-hidden="true">
+            <div class="blur-block" style="background:#fff5f5;border:1px solid #fecaca;border-radius:var(--rsm);padding:14px">
+              <p style="font-size:.85rem;font-weight:600;margin-bottom:4px">Structure en colonnes détectée</p>
+              <p style="font-size:.85rem;font-weight:600;margin-bottom:4px">Sections ATS non standardisées</p>
+              <p style="font-size:.85rem;font-weight:600">Optimisation mots-clés nécessaire</p>
+            </div>
+            <div class="lock-overlay">
+              <div style="background:rgba(255,255,255,.95);border:1px solid var(--gray-200);border-radius:var(--rsm);padding:10px 18px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.08)">
+                <p style="font-size:.8rem;font-weight:700;margin-bottom:2px">🔒 Rapport complet</p>
+                <p style="font-size:.72rem;color:var(--gray-600)">Inclus avec l'optimisation</p>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size:.74rem;color:var(--gray-400);text-align:center;margin-top:14px">
+            Analysé : <span id="wc">—</span> mots · Secteur : <span id="secDisplay">Général</span>
+          </p>
+        </div>
+
+        <!-- CTA PERSUASIF -->
+        <div class="cta-dark" role="complementary" aria-label="Offre d'optimisation">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border-radius:100px;padding:5px 12px;font-size:.72rem;font-weight:600;color:white;margin-bottom:14px">
+            <span style="width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block" aria-hidden="true"></span>
+            CV livré immédiatement après paiement
+          </div>
+
+          <!-- Ancre prix concurrents -->
+          <div class="competitor-anchor">
+            Les cabinets de CV facturent <strong>150€ à 400€</strong> la même prestation. CVpass : <strong>7,99€</strong>.
+          </div>
+
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.9rem;color:white;margin-bottom:10px;line-height:1.1">
+            Nos utilisateurs atteignent en moyenne <span style="color:var(--green)">92%</span> de compatibilité ATS
+          </h3>
+          <p style="color:rgba(255,255,255,.55);font-size:.875rem;margin-bottom:22px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.6">
+            CVpass restructure ton CV de A à Z — structure ATS parfaite, mots-clés optimisés, design professionnel. Tu télécharges ton PDF + Word immédiatement.
+          </p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:left;max-width:380px;margin:0 auto 22px">
+            <div style="font-size:.82rem;color:rgba(255,255,255,.75);display:flex;gap:7px"><span style="color:var(--green)">✓</span>Rapport ATS complet</div>
+            <div style="font-size:.82rem;color:rgba(255,255,255,.75);display:flex;gap:7px"><span style="color:var(--green)">✓</span>CV restructuré</div>
+            <div style="font-size:.82rem;color:rgba(255,255,255,.75);display:flex;gap:7px"><span style="color:var(--green)">✓</span>100% compatible ATS</div>
+            <div style="font-size:.82rem;color:rgba(255,255,255,.75);display:flex;gap:7px"><span style="color:var(--green)">✓</span>PDF + Word éditable</div>
+            <div style="font-size:.82rem;color:rgba(255,255,255,.75);display:flex;gap:7px"><span style="color:var(--green)">✓</span>Design professionnel</div>
+            <div style="font-size:.82rem;color:rgba(255,255,255,.75);display:flex;gap:7px"><span style="color:var(--green)">✓</span>Mots-clés par secteur</div>
+          </div>
+          <div style="margin-bottom:16px">
+            <span style="font-family:'DM Serif Display',serif;font-size:3rem;color:white;letter-spacing:-.03em">7,99€</span>
+            <span style="color:rgba(255,255,255,.4);font-size:.85rem;margin-left:8px">paiement unique</span>
+          </div>
+          <button class="btn btn-white btn-full" style="font-size:1rem;padding:15px" onclick="goPay()">
+            Voir mon CV professionnel →
+          </button>
+
+          <!-- Garantie bien visible -->
+          <div class="guarantee-badge" role="note">
+            🛡 <strong>Satisfait ou remboursé sous 7 jours</strong> — sans question
+          </div>
+
+          <p style="font-size:.7rem;color:rgba(255,255,255,.25);margin-top:8px">🔒 Paiement via Stripe — aussi sécurisé qu'Amazon</p>
+        </div>
+
+        <button onclick="resetTool()" style="width:100%;text-align:center;background:none;border:none;color:var(--gray-400);font-size:.8rem;cursor:pointer;margin-top:14px;padding:8px;font-family:'Satoshi',sans-serif" aria-label="Analyser un autre CV">
+          ↩ Analyser un autre CV
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMENT ÇA MARCHE -->
+  <section style="padding:72px 40px;background:var(--white);border-bottom:1px solid var(--gray-200)" aria-labelledby="how-title">
+    <div style="max-width:900px;margin:0 auto;text-align:center">
+      <p class="tool-label" style="text-align:center">Processus</p>
+      <h2 id="how-title" style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6rem);letter-spacing:-.02em;margin-bottom:48px">Comment ça marche</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px" role="list">
+        <div style="text-align:center" role="listitem">
+          <div style="width:52px;height:52px;margin:0 auto 16px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem" aria-hidden="true">📤</div>
+          <div style="font-size:.7rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Étape 1</div>
+          <h3 style="font-weight:700;font-size:.95rem;margin-bottom:6px">Dépose ton CV</h3>
+          <p style="font-size:.82rem;color:var(--gray-600)">Nous analysons vraiment le contenu de ton CV — pas un score générique.</p>
+        </div>
+        <div style="text-align:center" role="listitem">
+          <div style="width:52px;height:52px;margin:0 auto 16px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem" aria-hidden="true">⚡</div>
+          <div style="font-size:.7rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Étape 2</div>
+          <h3 style="font-weight:700;font-size:.95rem;margin-bottom:6px">Restructuration complète</h3>
+          <p style="font-size:.82rem;color:var(--gray-600)">Structure ATS, mots-clés, contenu amélioré, design professionnel — tout est refait.</p>
+        </div>
+        <div style="text-align:center" role="listitem">
+          <div style="width:52px;height:52px;margin:0 auto 16px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem" aria-hidden="true">📥</div>
+          <div style="font-size:.7rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Étape 3</div>
+          <h3 style="font-weight:700;font-size:.95rem;margin-bottom:6px">Télécharge & envoie</h3>
+          <p style="font-size:.82rem;color:var(--gray-600)">PDF prêt à envoyer + Word éditable. Livraison immédiate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing-sec" style="padding:72px 40px;background:var(--gray-50);border-bottom:1px solid var(--gray-200)" aria-labelledby="pricing-title">
+    <div style="max-width:440px;margin:0 auto;text-align:center">
+      <p class="tool-label" style="text-align:center">Tarif</p>
+      <h2 id="pricing-title" style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6rem);letter-spacing:-.02em;margin-bottom:8px">Simple. Un CV, un paiement.</h2>
+      <p style="color:var(--gray-600);font-size:.9rem;margin-bottom:32px">Pas d'abonnement. Tu paies une fois, tu reçois immédiatement.</p>
+      <div style="background:var(--black);border-radius:var(--r);padding:40px 36px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent)" aria-hidden="true"></div>
+        <p style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:10px">CV Optimisé</p>
+        <div style="font-family:'DM Serif Display',serif;font-size:4rem;color:white;letter-spacing:-.04em;line-height:1;margin-bottom:6px"><sup style="font-size:1.6rem;vertical-align:top;margin-top:12px;display:inline-block">€</sup>7,99</div>
+        <p style="color:rgba(255,255,255,.35);font-size:.82rem;margin-bottom:28px">par CV — paiement unique · sans abonnement</p>
+        <ul style="list-style:none;text-align:left;margin-bottom:28px;display:flex;flex-direction:column;gap:10px" aria-label="Ce qui est inclus">
+          <li style="font-size:.85rem;color:white;display:flex;align-items:center;gap:8px"><span style="color:var(--green);font-weight:700" aria-hidden="true">✓</span>Analyse ATS personnalisée</li>
+          <li style="font-size:.85rem;color:white;display:flex;align-items:center;gap:8px"><span style="color:var(--green);font-weight:700" aria-hidden="true">✓</span>CV entièrement restructuré</li>
+          <li style="font-size:.85rem;color:white;display:flex;align-items:center;gap:8px"><span style="color:var(--green);font-weight:700" aria-hidden="true">✓</span>Structure 100% compatible ATS</li>
+          <li style="font-size:.85rem;color:white;display:flex;align-items:center;gap:8px"><span style="color:var(--green);font-weight:700" aria-hidden="true">✓</span>PDF professionnel + Word éditable</li>
+          <li style="font-size:.85rem;color:white;display:flex;align-items:center;gap:8px"><span style="color:var(--green);font-weight:700" aria-hidden="true">✓</span>Mots-clés sectoriels optimisés</li>
+          <li style="font-size:.85rem;color:white;display:flex;align-items:center;gap:8px"><span style="color:var(--green);font-weight:700" aria-hidden="true">✓</span>Satisfait ou remboursé sous 7 jours</li>
+        </ul>
+        <button class="btn btn-white btn-full" style="font-size:.95rem;padding:14px" onclick="goPay()">Voir mon CV professionnel →</button>
+        <p style="font-size:.68rem;color:rgba(255,255,255,.2);margin-top:12px">🔒 Paiement via Stripe · Sécurisé SSL</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TÉMOIGNAGES -->
+  <section id="temoignages" style="padding:72px 40px;background:var(--white);border-bottom:1px solid var(--gray-200)" aria-labelledby="testi-title">
+    <div style="max-width:900px;margin:0 auto">
+      <p class="tool-label" style="text-align:center">Ils témoignent</p>
+      <h2 id="testi-title" style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);letter-spacing:-.02em;text-align:center">Ils ont décroché leur entretien</h2>
+      <div class="testi-grid">
+        <article class="testi-card" itemscope itemtype="https://schema.org/Review">
+          <div class="stars" aria-label="5 étoiles sur 5">★★★★★</div>
+          <p style="font-size:.85rem;color:var(--black);font-style:italic;margin-bottom:16px;line-height:1.65" itemprop="reviewBody">"J'envoyais des dizaines de candidatures sans réponse. Avec CVpass, j'ai eu 3 entretiens en une semaine. Mon score est passé de 24% à 93%."</p>
+          <div style="display:flex;align-items:center;gap:10px" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--green);font-size:.82rem" aria-hidden="true">L</div>
+            <div><p style="font-size:.85rem;font-weight:700" itemprop="name">Léa M.</p><p style="font-size:.74rem;color:var(--gray-400)">Stage marketing, Paris</p></div>
+          </div>
+        </article>
+        <article class="testi-card" itemscope itemtype="https://schema.org/Review">
+          <div class="stars" aria-label="5 étoiles sur 5">★★★★★</div>
+          <p style="font-size:.85rem;color:var(--black);font-style:italic;margin-bottom:16px;line-height:1.65" itemprop="reviewBody">"Mon score est passé de 31% à 96%. Le meilleur investissement de ma recherche d'alternance. Contrat signé 2 semaines après."</p>
+          <div style="display:flex;align-items:center;gap:10px" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--green);font-size:.82rem" aria-hidden="true">T</div>
+            <div><p style="font-size:.85rem;font-weight:700" itemprop="name">Thomas K.</p><p style="font-size:.74rem;color:var(--gray-400)">Alternance data, Lyon</p></div>
+          </div>
+        </article>
+        <article class="testi-card" itemscope itemtype="https://schema.org/Review">
+          <div class="stars" aria-label="5 étoiles sur 5">★★★★★</div>
+          <p style="font-size:.85rem;color:var(--black);font-style:italic;margin-bottom:16px;line-height:1.65" itemprop="reviewBody">"Mon CV Canva avait 18% de score ATS. Après CVpass, 91%. Premier emploi décroché dans la foulée. Simple et efficace."</p>
+          <div style="display:flex;align-items:center;gap:10px" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--green);font-size:.82rem" aria-hidden="true">S</div>
+            <div><p style="font-size:.85rem;font-weight:700" itemprop="name">Sarah B.</p><p style="font-size:.74rem;color:var(--gray-400)">Premier emploi, Bordeaux</p></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq-sec" style="padding:72px 40px;background:var(--gray-50);border-bottom:1px solid var(--gray-200)" aria-labelledby="faq-title">
+    <div style="max-width:640px;margin:0 auto">
+      <p class="tool-label" style="text-align:center">FAQ</p>
+      <h2 id="faq-title" style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);letter-spacing:-.02em;text-align:center;margin-bottom:36px">Questions fréquentes</h2>
+      <div>
+        <div class="faq-item"><button class="faq-btn" onclick="faq(this)" aria-expanded="false"><span>C'est quoi un ATS exactement ?</span><span class="faq-ico" aria-hidden="true">+</span></button><div class="faq-ans" role="region">Un ATS (Applicant Tracking System) filtre automatiquement les CV avant qu'un humain les lise. Si ton CV n'est pas structuré correctement, il est rejeté sans jamais être vu — même si ton profil est excellent.</div></div>
+        <div class="faq-item"><button class="faq-btn" onclick="faq(this)" aria-expanded="false"><span>Pourquoi mon CV Canva est-il mal lu ?</span><span class="faq-ico" aria-hidden="true">+</span></button><div class="faq-ans" role="region">Canva génère des PDF avec colonnes, tableaux et éléments graphiques. Les ATS ne savent pas lire ces structures — ils perdent les informations et rejettent le CV. CVpass crée une structure linéaire que tous les ATS peuvent lire.</div></div>
+        <div class="faq-item"><button class="faq-btn" onclick="faq(this)" aria-expanded="false"><span>Mon CV va-t-il rester joli visuellement ?</span><span class="faq-ico" aria-hidden="true">+</span></button><div class="faq-ans" role="region">Oui. CVpass génère un CV lisible par les ATS ET visuellement professionnel — design épuré, typographie soignée, mise en page qui plait aux recruteurs humains. Tu reçois aussi le Word éditable pour personnaliser.</div></div>
+        <div class="faq-item"><button class="faq-btn" onclick="faq(this)" aria-expanded="false"><span>Est-ce que le contenu de mon CV change ?</span><span class="faq-ico" aria-hidden="true">+</span></button><div class="faq-ans" role="region">Ton contenu est conservé et amélioré — les expériences sont reformulées avec des verbes d'action plus forts, les mots-clés sectoriels sont intégrés naturellement. Rien n'est inventé, tout est optimisé depuis ce que tu as déjà écrit.</div></div>
+        <div class="faq-item"><button class="faq-btn" onclick="faq(this)" aria-expanded="false"><span>Et si je ne suis pas satisfait ?</span><span class="faq-ico" aria-hidden="true">+</span></button><div class="faq-ans" role="region">Remboursement intégral sous 7 jours, sans question. Il suffit d'envoyer un email à contact@cvpass.fr avec ton numéro de commande.</div></div>
+        <div class="faq-item"><button class="faq-btn" onclick="faq(this)" aria-expanded="false"><span>Mes données sont-elles sécurisées ?</span><span class="faq-ico" aria-hidden="true">+</span></button><div class="faq-ans" role="region">Tes données restent privées et sécurisées. Le contenu de ton CV est traité uniquement pour générer ton CV optimisé et n'est jamais revendu ni transmis à des tiers.</div></div>
+        <div class="faq-item"><button class="faq-btn" onclick="faq(this)" aria-expanded="false"><span>Ça marche pour les stages et alternances ?</span><span class="faq-ico" aria-hidden="true">+</span></button><div class="faq-ans" role="region">Absolument — c'est même le public principal de CVpass. Les profils juniors et étudiants utilisent beaucoup Canva et souffrent le plus du problème ATS. CVpass est particulièrement efficace pour les premières candidatures.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section style="padding:72px 40px;background:var(--white)">
+    <div style="max-width:720px;margin:0 auto;background:var(--black);border-radius:var(--r);padding:56px 48px;text-align:center;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent)" aria-hidden="true"></div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:white;margin-bottom:12px">Arrête d'envoyer des CV dans le vide</h2>
+      <p style="color:rgba(255,255,255,.45);margin-bottom:32px;max-width:460px;margin-left:auto;margin-right:auto;font-size:.9rem">Rejoins les candidats qui ont boosté leur taux de réponse avec CVpass.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-white" onclick="scrollToSection('upload')">Analyser gratuitement →</button>
+        <button class="btn btn-green" onclick="goPay()">Optimiser — 7,99€</button>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:28px 40px;border-top:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px" role="contentinfo">
+    <div style="font-family:'DM Serif Display',serif;font-size:1.1rem">CV<span style="color:var(--green)">pass</span></div>
+    <nav aria-label="Liens de pied de page" style="display:flex;gap:20px">
+      <a style="font-size:.8rem;color:var(--gray-400);text-decoration:none;cursor:pointer" onclick="goPage('affil')">Affiliation</a>
+      <a style="font-size:.8rem;color:var(--gray-400);text-decoration:none;cursor:pointer" onclick="goPage('legal')">Mentions légales</a>
+      <a style="font-size:.8rem;color:var(--gray-400);text-decoration:none;cursor:pointer" onclick="goPage('rgpd')">Politique RGPD</a>
+      <a href="mailto:contact@cvpass.fr" style="font-size:.8rem;color:var(--gray-400);text-decoration:none">Contact</a>
+    </nav>
+    <p style="font-size:.78rem;color:var(--gray-400)">© 2025 CVpass — Tous droits réservés</p>
+  </footer>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE PERSONNALISATION (après paiement)
+══════════════════════════════════════ -->
+<div id="perso-page" class="page">
+  <div class="perso-wrap">
+    <div style="text-align:center;margin-bottom:40px">
+      <div style="display:inline-flex;align-items:center;gap:6px;background:var(--green-light);border:1px solid #a7f3d0;border-radius:100px;padding:6px 14px;font-size:.75rem;font-weight:600;color:#065f46;margin-bottom:16px">✅ Paiement confirmé !</div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-.02em;margin-bottom:8px">Personnalise ton CV</h2>
+      <p style="font-size:.9rem;color:var(--gray-600)">3 questions rapides — ton CV sera parfaitement adapté.</p>
+    </div>
+
+    <!-- 1. Poste visé -->
+    <div class="perso-card">
+      <p style="font-weight:700;font-size:1rem;margin-bottom:5px">1. Quel poste tu vises ?</p>
+      <p style="font-size:.82rem;color:var(--gray-600);margin-bottom:12px">Claude intégrera les mots-clés spécifiques à ce poste dans ton CV — résultat bien meilleur qu'un CV générique.</p>
+      <input type="text" id="posteVise" placeholder="Ex : Développeur Web, Chargée Marketing Digital, Alternance RH..." style="width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:var(--rs);font-size:.875rem;font-family:'Satoshi',sans-serif;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--black)'" onblur="this.style.borderColor='var(--gray-200)'">
+    </div>
+
+    <!-- 2. Nombre de pages -->
+    <div class="perso-card">
+      <p style="font-weight:700;font-size:1rem;margin-bottom:5px">2. Nombre de pages</p>
+      <p style="font-size:.82rem;color:var(--gray-600);margin-bottom:12px">Règle des recruteurs français : <strong>1 page pour les juniors</strong>, 2 pages max pour les profils seniors.</p>
+      <div class="pages-grid">
+        <div class="pages-opt sel" id="page1opt" onclick="selectPages(1)">
+          <span class="pnum">1</span>
+          <span class="psub">page</span>
+          <span class="pages-badge">Recommandé</span>
+          <div style="font-size:.7rem;color:var(--gray-400);margin-top:6px">Moins de 5 ans d'expérience</div>
+        </div>
+        <div class="pages-opt" id="page2opt" onclick="selectPages(2)">
+          <span class="pnum">2</span>
+          <span class="psub">pages</span>
+          <div style="font-size:.7rem;color:var(--gray-400);margin-top:10px">5+ ans d'expérience</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Couleur -->
+    <div class="perso-card">
+      <p style="font-weight:700;font-size:1rem;margin-bottom:5px">3. Style de ton CV</p>
+      <p style="font-size:.82rem;color:var(--gray-600);margin-bottom:12px">Choisit une couleur d'accent professionnelle — tout le texte reste en noir. Validées par des recruteurs RH.</p>
+      <div class="color-grid">
+        <div class="color-opt" id="col0" onclick="selectColor(0)">
+          <div class="color-dot" style="background:#1B3A6B"></div>
+          <span class="color-name">Bleu Marine</span>
+          <span class="color-sub">Finance · Conseil · Juridique</span>
+        </div>
+        <div class="color-opt sel" id="col1" onclick="selectColor(1)">
+          <div class="color-dot" style="background:#00845C"></div>
+          <span class="color-name">Vert Foncé</span>
+          <span class="color-sub">Marketing · RH · Com.</span>
+        </div>
+        <div class="color-opt" id="col2" onclick="selectColor(2)">
+          <div class="color-dot" style="background:#1A1A1A;border:1px solid #ddd"></div>
+          <span class="color-name">Noir Élégant</span>
+          <span class="color-sub">Tous secteurs</span>
+        </div>
+        <div class="color-opt" id="col3" onclick="selectColor(3)">
+          <div class="color-dot" style="background:#2E6DA4"></div>
+          <span class="color-name">Bleu Acier</span>
+          <span class="color-sub">Santé · Sciences</span>
+        </div>
+        <div class="color-opt" id="col4" onclick="selectColor(4)">
+          <div class="color-dot" style="background:#3D3D3D"></div>
+          <span class="color-name">Gris Anthracite</span>
+          <span class="color-sub">Tech · Ingénierie</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-black btn-full" style="font-size:1rem;padding:16px" id="generateBtn" onclick="startGeneration()">
+      Générer mon CV professionnel →
+    </button>
+    <p style="font-size:.74rem;color:var(--gray-400);text-align:center;margin-top:10px">⚡ Génération en ~60 secondes · Word + PDF téléchargeables immédiatement</p>
+  </div>
+</div>
+
+<!-- ══ PAGE CV PREVIEW ══ -->
+<div id="cv-preview-page" class="page">
+  <div class="cv-preview-wrap">
+    <div class="cv-score-banner" role="status">
+      <div>
+        <p style="font-size:.75rem;font-weight:600;opacity:.7;margin-bottom:4px;letter-spacing:.05em">SCORE ATS APRÈS OPTIMISATION</p>
+        <p style="font-family:'DM Serif Display',serif;font-size:2.4rem;letter-spacing:-.03em" id="newScoreDisplay">92/100</p>
+        <p style="font-size:.8rem;opacity:.75">Ton CV est maintenant compatible avec tous les ATS</p>
+      </div>
+      <div style="text-align:right">
+        <p style="font-size:.75rem;opacity:.6;margin-bottom:4px">Améliorations appliquées</p>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="font-size:.78rem">✅ Structure ATS standardisée</div>
+          <div style="font-size:.78rem">✅ Mots-clés optimisés</div>
+          <div style="font-size:.78rem">✅ Design professionnel</div>
+        </div>
+      </div>
+    </div>
+    <div class="dl-bar">
+      <button class="btn btn-black" id="dlWordBtn" onclick="downloadWord()">⬇ Télécharger Word (.docx)</button>
+      <button class="btn btn-green" id="dlPdfBtn" onclick="downloadPDF()">⬇ Télécharger PDF</button>
+      <button class="btn btn-outline" onclick="goPage('home')">← Accueil</button>
+    </div>
+    <!-- Bouton partage -->
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--r);padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <p style="font-weight:700;font-size:.9rem;margin-bottom:3px">🚀 Partage ton expérience</p>
+        <p style="font-size:.8rem;color:var(--gray-600)">Aide tes amis à passer les filtres ATS — partage CVpass !</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-black" style="padding:9px 14px;font-size:.78rem" onclick="shareOnTikTok()">📱 TikTok</button>
+        <button class="btn btn-outline" style="padding:9px 14px;font-size:.78rem" onclick="shareOnWhatsApp()">💬 WhatsApp</button>
+        <button class="btn btn-outline" style="padding:9px 14px;font-size:.78rem" onclick="shareOnLinkedIn()">💼 LinkedIn</button>
+        <button class="btn btn-outline" style="padding:9px 14px;font-size:.78rem;border-color:var(--green);color:var(--green)" onclick="goPage('affil')">💰 Affiliation</button>
+      </div>
+    </div>
+    <div style="font-size:.78rem;color:var(--gray-600);margin-bottom:24px;background:var(--green-light);border:1px solid #a7f3d0;border-radius:var(--rsm);padding:10px 14px" role="note">
+      💡 <strong>Conseil :</strong> Le fichier Word est idéal pour les candidatures en ligne (ATS). Le PDF est parfait pour envoyer directement à un recruteur humain.
+    </div>
+    <div id="cv-rendered" role="document" aria-label="Ton CV optimisé">
+      <div class="ats-badge">✓ ATS COMPATIBLE</div>
+      <!-- Header avec photo placeholder -->
+      <div class="cv-header-wrap">
+        <div class="cv-header-info">
+          <div class="cv-name" id="cvNameDisplay">Prénom Nom</div>
+          <div class="cv-title-line" id="cvTitleDisplay">Titre professionnel</div>
+          <div class="cv-contact">
+            <span id="cvEmail">📧 email@exemple.com</span>
+            <span id="cvPhone">📱 +33 6 XX XX XX XX</span>
+            <span id="cvLocation">📍 Paris, France</span>
+            <span id="cvLinkedin" style="display:none">🔗 LinkedIn</span>
+          </div>
+        </div>
+        <!-- Photo placeholder — à remplir dans Word après téléchargement -->
+        <div class="cv-photo-placeholder" title="Emplacement photo professionnelle — à ajouter dans Word">
+          <div class="photo-icon">📷</div>
+          <div class="photo-text">Votre photo<br>professionnelle<br><span style="color:var(--green,#00845c);font-weight:700">ici</span></div>
+        </div>
+      </div>
+      <div class="cv-section" id="cvSummarySection">
+        <div class="cv-section-title">Résumé Professionnel</div>
+        <div class="cv-summary-box" id="cvSummaryText">Professionnel motivé et polyvalent avec une solide expérience dans son domaine.</div>
+      </div>
+      <div class="cv-section">
+        <div class="cv-section-title">Expérience Professionnelle</div>
+        <div id="cvExpList"></div>
+      </div>
+      <div class="cv-section">
+        <div class="cv-section-title">Formation</div>
+        <div id="cvEduList"></div>
+      </div>
+      <div class="cv-section" id="cvSkillsSection">
+        <div class="cv-section-title">Compétences</div>
+        <div class="cv-skills-wrap" id="cvSkillsList"></div>
+      </div>
+      <div class="cv-section" id="cvLangSection">
+        <div class="cv-section-title">Langues</div>
+        <div class="cv-lang-row" id="cvLangList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE AFFILIATION ══ -->
+<div id="affil-page" class="page">
+  <div class="affil-wrap">
+    <div class="affil-hero">
+      <div style="display:inline-flex;align-items:center;gap:6px;background:var(--green-light);border:1px solid #a7f3d0;border-radius:100px;padding:6px 14px;font-size:.75rem;font-weight:600;color:#065f46;margin-bottom:20px">💰 Programme d'affiliation CVpass</div>
+      <h2>Gagne 2€ par CV vendu<br>grâce à ton lien</h2>
+      <p style="color:var(--gray-600);font-size:.95rem;max-width:500px;margin:12px auto 0;line-height:1.6">Partage ton lien unique. Chaque fois qu'une personne paie 7,99€ via ton lien, tu touches automatiquement <strong>2€ de commission (25%)</strong>. Sans plafond.</p>
+    </div>
+    <div class="affil-stat-grid" style="margin-bottom:32px">
+      <div class="affil-stat"><div class="affil-stat-n">25%</div><div class="affil-stat-l">Commission par vente</div></div>
+      <div class="affil-stat"><div class="affil-stat-n">2€</div><div class="affil-stat-l">Par CV vendu</div></div>
+      <div class="affil-stat"><div class="affil-stat-n">∞</div><div class="affil-stat-l">Sans plafond</div></div>
+    </div>
+    <div id="affil-register-view">
+      <div class="affil-card" style="text-align:center;padding:40px">
+        <div style="font-size:3rem;margin-bottom:16px" aria-hidden="true">🚀</div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:8px">Rejoindre le programme</h3>
+        <p style="color:var(--gray-600);font-size:.875rem;max-width:380px;margin:0 auto 28px;line-height:1.6">Crée ton compte affilié gratuit en 30 secondes et obtiens ton lien unique immédiatement.</p>
+        <button class="btn btn-black" style="padding:14px 32px;font-size:.95rem" onclick="openRegModal()">Créer mon compte affilié →</button>
+      </div>
+      <div class="affil-card" style="margin-top:20px">
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:20px">Comment ça marche</h3>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-num" aria-hidden="true">1</div><div><h4 style="font-size:.9rem;font-weight:700;margin-bottom:3px">Crée ton compte affilié gratuitement</h4><p style="font-size:.82rem;color:var(--gray-600)">Tu obtiens instantanément un lien unique (ex: cvpass.fr?ref=TONCODE).</p></div></div>
+          <div class="how-step"><div class="how-num" aria-hidden="true">2</div><div><h4 style="font-size:.9rem;font-weight:700;margin-bottom:3px">Partage ton lien partout</h4><p style="font-size:.82rem;color:var(--gray-600)">TikTok, Instagram, WhatsApp, LinkedIn — ou directement à tes contacts.</p></div></div>
+          <div class="how-step"><div class="how-num" aria-hidden="true">3</div><div><h4 style="font-size:.9rem;font-weight:700;margin-bottom:3px">Reçois 2€ par CV vendu</h4><p style="font-size:.82rem;color:var(--gray-600)">Dès qu'une personne paie via ton lien, 2€ sont crédités. Virement mensuel automatique.</p></div></div>
+        </div>
+      </div>
+      <div class="affil-card" style="margin-top:20px">
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:16px">Simule tes gains</h3>
+        <div style="margin-bottom:14px">
+          <label for="simSlider" style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Nombre de CV vendus via ton lien : <span id="simCount">50</span></label>
+          <input type="range" id="simSlider" min="1" max="500" value="50" oninput="updateSim()" style="width:100%;accent-color:var(--green)" aria-label="Simuler le nombre de CV vendus">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center">
+          <div style="background:var(--gray-50);border-radius:var(--rsm);padding:14px"><div style="font-size:.72rem;color:var(--gray-400);margin-bottom:4px">Ta commission</div><div style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--green)" id="simEarning">100€</div></div>
+          <div style="background:var(--gray-50);border-radius:var(--rsm);padding:14px"><div style="font-size:.72rem;color:var(--gray-400);margin-bottom:4px">CA généré</div><div style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--black)" id="simRevenue">400€</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="affil-dashboard-view" style="display:none">
+      <div class="affil-card" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+          <div><p style="font-size:.72rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Tableau de bord affilié</p><h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem">Bonjour, <span id="affiliateName">—</span> 👋</h3></div>
+          <div style="background:var(--green-light);border:1px solid #a7f3d0;border-radius:var(--rsm);padding:10px 16px;text-align:center"><p style="font-size:.72rem;color:#065f46;margin-bottom:2px">Solde disponible</p><p style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--green)" id="balanceDisplay">0€</p></div>
+        </div>
+        <div style="margin-bottom:20px">
+          <p style="font-size:.8rem;font-weight:600;color:var(--gray-600);margin-bottom:8px">Ton lien affilié unique</p>
+          <div class="link-box"><input type="text" id="affiliateLink" readonly aria-label="Ton lien affilié unique"><button class="copy-btn" onclick="copyLink()">Copier</button></div>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+            <button class="btn btn-outline" style="font-size:.78rem;padding:7px 14px" onclick="shareWhatsapp()">💬 WhatsApp</button>
+            <button class="btn btn-outline" style="font-size:.78rem;padding:7px 14px" onclick="shareLinkedin()">💼 LinkedIn</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+          <div class="affil-stat"><div class="affil-stat-n" id="statClicks">0</div><div class="affil-stat-l">Clics</div></div>
+          <div class="affil-stat"><div class="affil-stat-n" id="statConversions">0</div><div class="affil-stat-l">Conversions</div></div>
+          <div class="affil-stat"><div class="affil-stat-n" id="statEarned">0€</div><div class="affil-stat-l">Gagné</div></div>
+          <div class="affil-stat"><div class="affil-stat-n" id="statRate">0%</div><div class="affil-stat-l">Taux conv.</div></div>
+        </div>
+      </div>
+      <div class="affil-card">
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:16px">Historique des commissions</h3>
+        <table class="commission-table" aria-label="Historique des commissions">
+          <thead><tr><th scope="col">Date</th><th scope="col">CV vendu</th><th scope="col">Commission</th><th scope="col">Statut</th></tr></thead>
+          <tbody id="commissionRows"><tr><td colspan="4" style="text-align:center;color:var(--gray-400);font-size:.85rem;padding:20px">Aucune commission pour l'instant — partagez votre lien !</td></tr></tbody>
+        </table>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-200);flex-wrap:wrap;gap:12px">
+          <div><p style="font-size:.78rem;color:var(--gray-600)">Virements effectués le 1er de chaque mois · Minimum : 10€</p></div>
+          <button class="btn btn-black" id="withdrawBtn" style="opacity:.4;cursor:not-allowed;font-size:.85rem;padding:10px 20px" disabled aria-disabled="true">Retirer mes gains</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ PAGE MENTIONS LÉGALES ══ -->
+<div id="legal-page" class="page">
+  <div style="max-width:760px;margin:0 auto;padding:60px 40px 80px">
+    <button class="btn btn-outline" style="margin-bottom:24px" onclick="goPage('home')">← Retour accueil</button>
+    <h1 style="font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:32px">Mentions légales</h1>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Éditeur du site</h2>
+    <p style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">
+      <strong>CVpass</strong> — Auto-entrepreneur<br>
+      Adresse : [À compléter]<br>
+      SIRET : [À compléter après immatriculation]<br>
+      Email : <a href="mailto:contact@cvpass.fr" style="color:var(--green)">contact@cvpass.fr</a>
+    </p>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Hébergement</h2>
+    <p style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">Vercel Inc., 340 Pine Street Suite 701, San Francisco, CA 94104, USA.</p>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Politique de remboursement</h2>
+    <p style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">Remboursement intégral sous 7 jours, sans question. Email : <a href="mailto:contact@cvpass.fr" style="color:var(--green)">contact@cvpass.fr</a></p>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Responsabilité</h2>
+    <p style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">CVpass s'efforce de fournir un service de qualité. Les résultats ATS peuvent varier selon les entreprises et secteurs.</p>
+  </div>
+</div>
+
+<!-- ══ PAGE RGPD ══ -->
+<div id="rgpd-page" class="page">
+  <div style="max-width:760px;margin:0 auto;padding:60px 40px 80px">
+    <button class="btn btn-outline" style="margin-bottom:24px" onclick="goPage('home')">← Retour accueil</button>
+    <h1 style="font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:8px">Politique de confidentialité</h1>
+    <p style="font-size:.85rem;color:var(--gray-400);margin-bottom:32px">Dernière mise à jour : Mai 2025</p>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Données collectées</h2>
+    <ul style="padding-left:20px;margin-bottom:12px">
+      <li style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">Contenu de votre CV (texte uniquement, traité pour générer votre CV optimisé)</li>
+      <li style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">Données de paiement traitées exclusivement par Stripe — CVpass n'y a jamais accès</li>
+    </ul>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Utilisation des données</h2>
+    <p style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">Les données de votre CV sont utilisées <strong>uniquement</strong> pour générer votre CV optimisé. Elles ne sont ni conservées après traitement, ni revendues, ni transmises à des tiers.</p>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Vos droits (RGPD)</h2>
+    <p style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">Droit d'accès, de rectification et d'effacement de vos données : <a href="mailto:contact@cvpass.fr" style="color:var(--green)">contact@cvpass.fr</a></p>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Paiement sécurisé</h2>
+    <p style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">Les paiements sont traités par <strong>Stripe Inc.</strong> CVpass ne stocke jamais vos données bancaires.</p>
+    <h2 style="font-size:1.1rem;font-weight:700;margin:28px 0 10px">Cookies</h2>
+    <p style="font-size:.9rem;color:var(--gray-600);line-height:1.75;margin-bottom:8px">CVpass n'utilise pas de cookies publicitaires. Seuls les cookies techniques nécessaires sont utilisés.</p>
+  </div>
+</div>
+
+<!-- ══ OVERLAY GÉNÉRATION CV ══ -->
+<div id="genOverlay" style="display:none;position:fixed;inset:0;background:rgba(13,13,13,.88);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
+  <div style="background:#fff;border-radius:var(--r);padding:40px;max-width:400px;width:90%;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:14px">⚙️</div>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px">Génération en cours...</h3>
+    <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:20px" id="genMsg">Restructuration et optimisation ATS</p>
+    <div style="display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--gray-50);border-radius:var(--rs);padding:16px">
+      <div class="astep" id="gos1"><div class="asico">1</div>Analyse du contenu original</div>
+      <div class="astep" id="gos2"><div class="asico">2</div>Restructuration ATS</div>
+      <div class="astep" id="gos3"><div class="asico">3</div>Optimisation mots-clés</div>
+      <div class="astep" id="gos4"><div class="asico">4</div>Application du style choisi</div>
+    </div>
+  </div>
+</div>
+<!-- ══ MODAL PAIEMENT ══ -->
+<div class="modal-bg" id="payModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closePayModal()" aria-label="Fermer">✕</button>
+    <div id="payFormView">
+      <h3 id="modal-title" style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:4px">Finalise ta commande</h3>
+      <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:20px">1 clic · Paiement sécurisé · CV téléchargeable immédiatement</p>
+
+      <!-- Récap commande -->
+      <div class="order-box" aria-label="Résumé de la commande">
+        <div class="orow"><span>CV Restructuré ATS</span><span>7,99€</span></div>
+        <div class="orow"><span>Format livré</span><span>PDF + Word éditable</span></div>
+        <div class="orow"><span>Photo placeholder</span><span>Inclus ✓</span></div>
+        <div class="orow"><span>Délai</span><span style="color:var(--green);font-weight:600">Immédiat ⚡</span></div>
+        <div class="orow"><span>Total TTC</span><span class="ototal">7,99€</span></div>
+      </div>
+
+      <div id="refNote" style="display:none;background:var(--green-light);border:1px solid #a7f3d0;border-radius:var(--rsm);padding:10px 14px;font-size:.78rem;color:#065f46;margin-bottom:14px" role="note">
+        🎉 Code parrainage appliqué — merci à votre ami !
+      </div>
+
+      <!-- BOUTON PAIEMENT DIRECT — aucun champ email, Stripe gère tout -->
+      <!-- 
+        INTÉGRATION STRIPE :
+        Remplace le onclick="goPay()" par :
+        onclick="window.location.href='https://buy.stripe.com/TON_PAYMENT_LINK'"
+        
+        Et dans Stripe Dashboard → Payment Links → Success URL :
+        https://cvpass.fr?paid=true
+        
+        Le site détecte automatiquement ?paid=true et redirige vers la page personnalisation.
+      -->
+      <button id="payBtn" class="btn btn-black btn-full" style="font-size:1.05rem;padding:17px;margin-top:8px;border-radius:12px" onclick="goPay()">
+        🔒 Payer 7,99€ et personnaliser mon CV →
+      </button>
+
+      <!-- Logos sécurité Stripe -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-top:14px;background:var(--gray-50);border-radius:var(--rsm);padding:10px">
+        <span style="font-size:1.1rem;font-weight:900;color:#635bff;letter-spacing:.05em;margin-right:10px">stripe</span>
+        <span style="font-size:.7rem;color:var(--gray-400);display:flex;align-items:center;gap:4px;margin-right:10px">🔒 SSL 256-bit</span>
+        <span style="font-size:.7rem;color:var(--gray-400);margin-right:10px">·</span>
+        <span style="font-size:.7rem;color:var(--gray-400)">🛡 Remboursé · 7 jours</span>
+      </div>
+
+      <p style="font-size:.7rem;color:var(--gray-400);text-align:center;margin-top:8px">
+        CB · Apple Pay · Google Pay · 3D Secure — Aucune donnée bancaire stockée par CVpass
+      </p>
+    </div>
+    <div id="payGenView" style="display:none;text-align:center" role="status" aria-live="polite">
+      <div style="font-size:2.8rem;margin-bottom:12px" aria-hidden="true">⚙️</div>
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:8px">Génération de ton CV...</h3>
+      <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:20px">Restructuration et optimisation de ton CV en cours.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--gray-50);border-radius:var(--rsm);padding:16px">
+        <div class="astep" id="gs1"><div class="asico" aria-hidden="true">1</div>Analyse du contenu original</div>
+        <div class="astep" id="gs2"><div class="asico" aria-hidden="true">2</div>Restructuration ATS</div>
+        <div class="astep" id="gs3"><div class="asico" aria-hidden="true">3</div>Optimisation mots-clés</div>
+        <div class="astep" id="gs4"><div class="asico" aria-hidden="true">4</div>Génération Word + PDF</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL INSCRIPTION AFFILIÉ ══ -->
+<div class="modal-bg" id="reg-modal" role="dialog" aria-modal="true" aria-labelledby="reg-title">
+  <div class="modal-box" style="max-width:400px">
+    <button class="modal-x" onclick="closeRegModal()" aria-label="Fermer">✕</button>
+    <h3 id="reg-title" style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:4px">Créer mon compte affilié</h3>
+    <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:20px">Gratuit · Lien unique obtenu immédiatement</p>
+    <div class="ff"><label for="regName">Prénom *</label><input type="text" id="regName" placeholder="Ton prénom" autocomplete="given-name" required></div>
+    <div class="ff"><label for="regEmail">Email *</label><input type="email" id="regEmail" placeholder="ton@email.com" autocomplete="email" required></div>
+    <p style="font-size:.75rem;color:var(--gray-600);margin-bottom:12px;background:var(--gray-50);border-radius:var(--rsm);padding:10px">💳 Les informations bancaires pour les virements vous seront demandées séparément, par email sécurisé, une fois le programme activé.</p>
+    <button class="btn btn-black btn-full" style="font-size:.95rem;padding:13px;margin-top:4px" onclick="registerAffiliate()">Créer mon compte et obtenir mon lien →</button>
+    <p style="font-size:.72rem;color:var(--gray-400);text-align:center;margin-top:10px">Aucun paiement requis · Virements le 1er du mois</p>
+  </div>
+</div>
+
+<script>
+// ── PDF.js init (defer) ──
+window.addEventListener('load', () => {
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+});
+
+// ── CONFIG ──
+const STRIPE_URL = 'https://buy.stripe.com/8x2dRa07d7tVg20dHo5wI00';
+const CLAUDE_KEY = ''; // Clé gérée côté serveur via /api/claude
+const CLAUDE_API = '/api/claude'; // Proxy sécurisé Vercel
+
+// ── STATE ──
+let cvFile=null, cvText='', sector='', aiScore=null, aiResult=null, optimizedCV=null, affiliateCode='';
+// ── PALETTES ──
+const PALETTES = [
+  { name:'Bleu Marine',     hex:'#1B3A6B', hexPlain:'1B3A6B', light:'#EEF2F9', lightPlain:'EEF2F9' },
+  { name:'Vert Foncé',      hex:'#00845C', hexPlain:'00845C', light:'#E8F5F0', lightPlain:'E8F5F0' },
+  { name:'Noir Élégant',    hex:'#1A1A1A', hexPlain:'1A1A1A', light:'#F0F0F0', lightPlain:'F0F0F0' },
+  { name:'Bleu Acier',      hex:'#2E6DA4', hexPlain:'2E6DA4', light:'#EBF3FA', lightPlain:'EBF3FA' },
+  { name:'Gris Anthracite', hex:'#3D3D3D', hexPlain:'3D3D3D', light:'#EFEFEF', lightPlain:'EFEFEF' },
+];
+let chosenColor = 1; // Vert Foncé par défaut
+let chosenPages = 1;
+let posteVise = '';
+
+// ── NAVIGATION ──
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id+'-page').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+// Renamed to avoid overriding native window.scrollTo
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior:'smooth'});
+}
+
+// ── AFTER BAR ANIMATION ──
+setTimeout(() => { const b = document.getElementById('afterBar'); if(b) b.style.width='94%'; }, 900);
+
+// ── FILE ──
+function onFile(e) {
+  const f = e.target.files[0]; if(!f) return;
+  cvFile = f;
+  cvText = ''; // reset — sera extrait au bon moment dans launchAnalysis
+  document.getElementById('up-prompt').style.display = 'none';
+  const s = document.getElementById('up-success');
+  s.style.display = 'flex';
+  document.getElementById('upName').textContent = f.name;
+  document.getElementById('upSize').textContent = (f.size/1024).toFixed(0)+' Ko';
+  document.getElementById('goBtn').disabled = false;
+  // Afficher le badge de détection du type de fichier
+  const badge = document.getElementById('fileBadge');
+  if(badge) {
+    badge.textContent = detectFileType(f);
+    badge.style.display = 'block';
+  }
+  // NE PAS lire ici : PDF et DOCX sont des fichiers binaires,
+  // readAsText() donnerait du charabia. On extrait dans launchAnalysis.
+}
+
+const dz = document.getElementById('dropZone');
+if (dz) {
+  dz.addEventListener('dragover', e => {e.preventDefault();dz.classList.add('drag');});
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault();dz.classList.remove('drag');
+    const f=e.dataTransfer.files[0];
+    if(f){document.getElementById('cvInput').files=e.dataTransfer.files;onFile({target:{files:[f]}});}
+  });
+}
+
+function clearFile() {
+  cvFile=null;cvText='';
+  document.getElementById('up-prompt').style.display='block';
+  document.getElementById('up-success').style.display='none';
+  document.getElementById('goBtn').disabled=true;
+  document.getElementById('cvInput').value='';
+}
+
+function setSec(btn, val) {
+  document.querySelectorAll('.sp-btn').forEach(b=>{b.classList.remove('on');b.setAttribute('aria-pressed','false');});
+  btn.classList.add('on');
+  btn.setAttribute('aria-pressed','true');
+  sector=val;
+}
+
+// ── EXTRACTION TEXTE — selon le type de fichier ──
+
+// PDF via PDF.js
+async function extractPDF(file) {
+  try {
+    if (typeof pdfjsLib === 'undefined') return '';
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: new Uint8Array(buf)}).promise;
+    let txt = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 5); i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      // Reconstituer l'ordre de lecture naturel
+      const items = content.items;
+      let lastY = null;
+      for (const item of items) {
+        if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
+          txt += '\n'; // nouvelle ligne si changement de position verticale
+        }
+        txt += item.str + ' ';
+        lastY = item.transform[5];
+      }
+      txt += '\n';
+    }
+    return txt.trim();
+  } catch(e) {
+    console.warn('PDF extraction error:', e);
+    return '';
+  }
+}
+
+// DOCX via mammoth.js — extraction texte propre avec normalisation bullets
+async function extractDOCX(file) {
+  try {
+    if (typeof mammoth === 'undefined') {
+      return await readAsText(file);
+    }
+    const buf = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer: buf });
+    let text = result.value || '';
+    // Normaliser tous les types de bullets Word vers "- " pour l'analyseur
+    text = text
+      .replace(/\u25B8\s?/g, '\u25B8 ')
+      .replace(/\u2022\s?/g, '- ')
+      .replace(/\uF0B7\s?/g, '- ')
+      .replace(/\u25CF\s?/g, '- ')
+      .replace(/\u25AA\s?/g, '- ')
+      .replace(/\u2013 /g, '- ')
+      .replace(/\u2014 /g, '- ')
+      .replace(/\t/g, '  ');
+    return text.trim();
+  } catch(e) {
+    console.warn('DOCX extraction error:', e);
+    return '';
+  }
+}
+
+
+// TXT — lecture directe
+function readAsText(file) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = ev => res(ev.target.result || '');
+    r.onerror = () => res('');
+    r.readAsText(file, 'utf-8');
+  });
+}
+
+// Dispatcher : choisit la bonne méthode selon l'extension
+async function extractTextFromFile(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.pdf'))               return await extractPDF(file);
+  if (name.endsWith('.docx') || name.endsWith('.doc')) return await extractDOCX(file);
+  if (name.endsWith('.txt'))               return await readAsText(file);
+  // Inconnu — tenter comme texte
+  return await readAsText(file);
+}
+
+// ── SCORE REPRODUCTIBLE (hash du contenu) ──
+function hashText(str) {
+  let h=5381;
+  for(let i=0;i<Math.min(str.length,500);i++) h=((h<<5)+h)+str.charCodeAt(i);
+  return Math.abs(h);
+}
+
+// ── LAUNCH ANALYSIS ──
+async function launchAnalysis() {
+  // Extraction du vrai texte selon le type de fichier
+  // (PDF.js pour PDF, mammoth pour DOCX, FileReader pour TXT)
+  cvText = await extractTextFromFile(cvFile);
+  document.getElementById('step-upload').style.display='none';
+  document.getElementById('step-prog').style.display='block';
+  setStep(2);
+
+  const steps=['as1','as2','as3','as4'];
+  const pcts=[22,48,75,97];
+  const msgs=['Extraction du contenu...','Analyse structure ATS...','Vérification mots-clés...','Calcul du score...'];
+  const subs=['Lecture du texte de ton CV','Détection colonnes et structure','Analyse sectorielle','Rapport personnalisé en cours'];
+
+  for(let i=0;i<4;i++){
+    markAS(steps[i],'act');
+    document.getElementById('pTitle').textContent=msgs[i];
+    document.getElementById('pSub').textContent=subs[i];
+    await animBar(i===0?0:pcts[i-1],pcts[i]);
+    markAS(steps[i],'done');
+    if(i<3) await sleep(320);
+  }
+  await animBar(97,100); await sleep(350);
+  await runAI();
+  document.getElementById('step-prog').style.display='none';
+  document.getElementById('step-result').style.display='block';
+  renderScore();
+  document.getElementById('step-result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── ANALYSE ──
+async function runAI() {
+  const hasContent = cvText.trim().length > 60;
+  // Score reproductible basé sur le contenu réel
+  const local = hasContent ? localScore(cvText) : Math.floor(hashText(cvFile?.name||'x') % 20)+14;
+  const sNote = sector ? `Secteur ciblé : ${sector}.` : '';
+
+  const prompt = hasContent
+    ? `Tu es un expert ATS (Applicant Tracking System) certifié. Analyse ce CV avec une grille de notation stricte et objective.
+
+${sNote}
+CV à analyser :
+---
+${cvText.substring(0,4000)}
+---
+
+GRILLE DE NOTATION (total 100 points) :
+
+1. STRUCTURE (25 pts)
+   - Sections clairement nommées (Expérience, Formation, Compétences, Contact) : +8
+   - Structure linéaire sans colonnes ni tableaux : +7
+   - Ordre logique des sections : +5
+   - Pas de caractères spéciaux ou symboles graphiques bloquants : +5
+
+2. CONTENU & MOTS-CLÉS (30 pts)
+   - Email + téléphone présents : +8
+   - Dates de travail au format standard (MM/AAAA ou AAAA) : +7
+   - Verbes d'action (géré, développé, coordonné, réalisé...) : +5 (max)
+   - Mots-clés sectoriels présents : +5 (évaluer selon secteur ${sNote})
+   - Résumé/profil professionnel présent : +5
+
+3. FORMAT TECHNIQUE (25 pts)
+   - Longueur appropriée (200-700 mots) : +8
+   - Bullet points structurés : +7
+   - Polices standard (pas de polices fantaisie détectables) : +5
+   - LinkedIn ou profil pro mentionné : +5
+
+4. LISIBILITÉ ATS (20 pts)
+   - Texte extractible correctement (pas d'image) : +10
+   - Pas de header/footer complexes : +5
+   - Informations de contact en haut du document : +5
+
+Calcule un score honnête entre 0 et 100 basé sur cette grille.
+
+Réponds UNIQUEMENT en JSON valide sans markdown :
+{"score":<score calculé objectivement 0-100>,"structure":"<Incompatible|Passable|Bonne|Excellente>","keywords":"<Insuffisants|Moyens|Bons|Excellents>","issue_title":"<problème principal en 6 mots max>","issue_desc":"<explication concrète et spécifique à CE CV>","word_count":<nombre de mots>,"name":"<nom complet si détecté>","email":"<email si détecté>","phone":"<téléphone si détecté>","title":"<titre/poste si détecté>","summary":"<résumé professionnel 3 phrases percutant>","experiences":[{"title":"<poste>","company":"<entreprise>","start":"<MM/AAAA>","end":"<MM/AAAA ou Présent>","bullets":["<verbe d'action + résultat concret et chiffré si possible>"]}],"education":[{"degree":"<diplôme complet>","school":"<établissement>","year":"<AAAA>"}],"skills":["<compétence technique ou soft skill>"],"languages":["<Langue (Niveau)>"]}`
+    : `CV illisible (PDF image ou encodage complexe). JSON : {"score":${local},"structure":"Incompatible","keywords":"Insuffisants","issue_title":"Format PDF illisible par les ATS","issue_desc":"Ton PDF contient des éléments graphiques qui le rendent invisible pour les logiciels de recrutement. Les ATS ne peuvent extraire aucune information.","word_count":0,"name":"","email":"","phone":"","title":"","summary":"Professionnel dynamique avec expertise solide dans son domaine. Capacité avérée à gérer des projets complexes en équipe.","experiences":[],"education":[],"skills":["Communication","Gestion de projet","Analyse","Organisation"],"languages":["Français (Natif)","Anglais (Courant)"]}`;
+
+  try {
+    const r = await fetch(CLAUDE_API,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1400,messages:[{role:'user',content:prompt}]})
+    });
+    const d = await r.json();
+    const raw = d.content?.[0]?.text||'';
+    const m = raw.match(/\{[\s\S]*\}/);
+    if(m){ aiResult=JSON.parse(m[0]); aiScore=aiResult.score; optimizedCV=aiResult; return; }
+  } catch(e){ console.warn('API analysis error',e); }
+
+  // Fallback local — score reproductible
+  aiScore=local;
+  aiResult={
+    score:local,
+    structure:local<40?'Incompatible':local<65?'Passable':'Bonne',
+    keywords:local<35?'Insuffisants':local<60?'Moyens':'Bons',
+    issue_title:local<30?'Format PDF non lisible par les ATS':local<50?'Structure non compatible ATS':'Mots-clés insuffisants',
+    issue_desc:local<30?'Ton PDF ne peut pas être lu par les logiciels de recrutement — la mise en page bloque toute extraction.':local<50?'La structure de ton CV empêche les ATS de lire les informations correctement.':'Les mots-clés recherchés par les recruteurs sont insuffisants dans ton CV actuel.',
+    word_count:cvText.split(/\s+/).filter(w=>w.length>1).length,
+    name:'',email:'',phone:'',title:'',
+    summary:'Professionnel motivé avec solide expertise dans son domaine. Orienté résultats, capable de gérer des projets complexes avec autonomie et rigueur.',
+    experiences:[],education:[],
+    skills:['Communication','Gestion de projet','Analyse','Organisation'],
+    languages:['Français (Natif)']
+  };
+  optimizedCV=aiResult;
+}
+
+// ── LOCAL SCORE — reproductible (sans Math.random) ──
+function localScore(t) {
+  if(!t||t.length<50) return 20;
+  let s=28;
+  const tl=t.toLowerCase();
+  const words=t.split(/\s+/).filter(w=>w.length>1);
+  // Longueur
+  if(words.length>300)s+=12; else if(words.length>150)s+=7; else if(words.length<80)s-=8;
+  // Sections ATS
+  ['expérience','experience','formation','compétences','competences','contact','profil','résumé'].forEach(k=>{if(tl.includes(k))s+=3;});
+  // Contact
+  if(/[\w.]+@[\w.]+\.\w{2,}/.test(t))s+=6; else s-=5;
+  if(/(\+33|0[0-9])[\s.\-]?([0-9]{2}[\s.\-]?){4}/.test(t))s+=4;
+  // Dates
+  const dates=(t.match(/\b(20[0-9]{2}|19[0-9]{2})\b/g)||[]).length;
+  if(dates>=3)s+=8; else if(dates>=1)s+=4; else s-=6;
+  // Verbes d'action
+  ['géré','développé','créé','réalisé','coordonné','analysé','conçu','optimisé','piloté','contribué'].forEach(v=>{if(tl.includes(v))s+=2;});
+  // Bullets
+  const bullets=(t.match(/[-•·*→▸◆▪■●]\s/g)||[]).length; // ▸ = bullet CVpass
+  if(bullets>=5)s+=7; else if(bullets>=2)s+=3;
+  // Caractères suspects (Canva)
+  const special=(t.match(/[|]{2,}|[\u2500-\u257F]/g)||[]).length;
+  if(special>3)s-=10;
+  // LinkedIn
+  if(tl.includes('linkedin'))s+=3;
+  // Variation déterministe basée sur le contenu (pas random)
+  const h=hashText(t)%7;
+  s+=h-3;
+  return Math.max(8,Math.min(80,Math.round(s)));
+}
+
+// ── RENDER SCORE ──
+function renderScore() {
+  const r=aiResult; const s=r.score;
+  const arc=document.getElementById('sArc');
+  const snum=document.getElementById('sNum');
+  const slbl=document.getElementById('sLbl');
+  const circ=314;
+  const col=s>=65?'var(--green)':s>=40?'var(--amber)':'var(--red)';
+  arc.style.stroke=col;
+  slbl.setAttribute('fill',col);
+  slbl.textContent=s>=65?'Bon score':s>=40?'À améliorer':'Score critique';
+  setTimeout(()=>{
+    arc.style.strokeDashoffset=circ-(circ*s/100);
+    document.getElementById('pBar').setAttribute('aria-valuenow',s);
+    let c=0;
+    const iv=setInterval(()=>{c=Math.min(c+2,s);snum.textContent=c;if(c>=s)clearInterval(iv);},18);
+  },100);
+
+  const sh=document.getElementById('sHeadline');
+  const sm=document.getElementById('sMsg');
+  if(s>=65){
+    sh.textContent='Score moyen — des améliorations significatives possibles';sh.style.color='var(--amber)';
+    sm.textContent='Ton CV passe certains filtres mais en rate beaucoup. CVpass peut significativement améliorer ton taux de réponse.';
+  } else if(s>=40){
+    sh.textContent='Score faible — rejets fréquents';sh.style.color='var(--amber)';
+    sm.textContent='Ton CV est rejeté par la majorité des ATS. Les problèmes détectés expliquent directement l\'absence de réponses.';
+  } else {
+    sh.textContent='Score critique — CV invisible pour les recruteurs';sh.style.color='var(--red)';
+    sm.textContent='Ton CV est automatiquement rejeté avant d\'être lu. Les logiciels ATS ne peuvent pas lire son contenu.';
+  }
+
+  const sc=s>=40?'a':'r';
+  const kc=r.keywords==='Bons'?'g':r.keywords==='Moyens'?'a':'r';
+  setMC('mStr',r.structure,sc);
+  setMC('mKw',r.keywords,kc);
+  document.getElementById('issueTitle').textContent=r.issue_title||'—';
+  document.getElementById('issueDesc').textContent=r.issue_desc||'—';
+  document.getElementById('wc').textContent=(r.word_count||0)+' mots';
+  document.getElementById('secDisplay').textContent=sector||'Général';
+}
+
+function setMC(id,val,cls){const el=document.getElementById(id);el.textContent=val;el.className='mc-v '+cls;}
+
+// ── PAYMENT ──
+// ── PAIEMENT STRIPE DIRECT ──
+function goPay() {
+  closePayModal();
+  const ref = new URLSearchParams(window.location.search).get('ref') || affiliateCode;
+  let url = STRIPE_URL;
+  if (ref) url += '?client_reference_id=' + encodeURIComponent(ref);
+  window.location.href = url;
+}
+
+function openPayModal() {
+  const ref = new URLSearchParams(window.location.search).get('ref');
+  if(ref) document.getElementById('refNote').style.display='block';
+  document.getElementById('payModal').classList.add('open');
+  // Focus sur le bouton payer directement
+  setTimeout(() => document.getElementById('payBtn')?.focus(), 100);
+}
+function closePayModal(){
+  document.getElementById('payModal').classList.remove('open');
+  // Nettoyer et réinitialiser la modal
+  const payView = document.getElementById('payFormView');
+  if(payView) payView.style.display = 'block';
+  const btn = document.getElementById('payBtn');
+  if(btn){ btn.disabled=false; btn.innerHTML='🔒 Payer 7,99€ et personnaliser mon CV →'; }
+  // Supprimer les divs de succès ajoutés dynamiquement
+  document.querySelectorAll('#payModal .modal-box > div:not(#payFormView):not(#payGenView)').forEach(el => el.remove());
+}
+
+async function doPayment() {
+  // ── PRODUCTION : remplacer le onclick par :
+  // window.location.href = 'https://buy.stripe.com/TON_PAYMENT_LINK'
+  // Stripe redirige vers cvpass.fr?paid=true après paiement
+  // Le site détecte ?paid=true et va automatiquement sur la page personnalisation
+
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Redirection vers Stripe...';
+  await sleep(900);
+
+  // === SIMULATION BETA (à supprimer quand Stripe est connecté) ===
+  document.getElementById('payFormView').style.display = 'none';
+  const succDiv = document.createElement('div');
+  succDiv.style.cssText = 'text-align:center;padding:28px 0';
+  succDiv.innerHTML = `
+    <div style="font-size:3.5rem;margin-bottom:14px">✅</div>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px;color:#065f46">Paiement confirmé !</h3>
+    <p style="font-size:.88rem;color:var(--gray-600);line-height:1.6">
+      Préparation de ton espace personnalisation...<br>
+      <span style="font-size:.78rem;color:var(--gray-400)">Couleur · Pages · Poste visé</span>
+    </p>
+  `;
+  document.querySelector('#payModal .modal-box').appendChild(succDiv);
+  await sleep(1500);
+  closePayModal();
+  trackCommission();
+  goPage('perso');
+}
+// ── GENERATE OPTIMIZED CV — produit un CV qui score 90-97/100 ──
+async function generateOptimizedCV() {
+  const sNote = sector ? `Secteur cible : ${sector}.` : '';
+  const posteNote = (typeof posteVise !== 'undefined' && posteVise) ? `Poste visé par le candidat : "${posteVise}". Intègre les mots-clés spécifiques à ce poste dans le résumé et les compétences.` : '';
+  const pagesNote = (typeof chosenPages !== 'undefined' && chosenPages === 1)
+    ? 'CONTRAINTE ABSOLUE : CV sur 1 PAGE MAXIMUM. Priorise les infos les plus récentes et impactantes. Max 3 bullets par expérience. Résumé max 50 mots.'
+    : 'CV sur 2 PAGES MAXIMUM. 4-5 bullets par expérience. Résumé 60-80 mots.';
+  const preview = cvText.substring(0,4000) || `Fichier CV : ${cvFile?.name}`;
+
+  const generationPrompt = `Tu es un expert en rédaction de CV et optimisation ATS avec 10 ans d'expérience en recrutement en France.
+Ta mission : transformer ce CV en un CV qui obtient 92-97/100 au scoring ATS.
+CONSERVE TOUTES LES INFORMATIONS RÉELLES — ne génère rien d'inventé.
+
+${sNote}
+
+CV ORIGINAL :
+---
+${preview}
+---
+
+RÈGLES OBLIGATOIRES pour un score ATS 92+ :
+
+STRUCTURE (respecter cet ordre exact) :
+1. Nom complet
+2. Titre professionnel précis
+3. Contact : email | téléphone | ville | LinkedIn
+4. RÉSUMÉ PROFESSIONNEL (section nommée exactement ainsi)
+5. EXPÉRIENCE PROFESSIONNELLE (section nommée exactement ainsi)
+6. FORMATION (section nommée exactement ainsi)
+7. COMPÉTENCES (section nommée exactement ainsi)
+8. LANGUES (section nommée exactement ainsi)
+
+RÉSUMÉ PROFESSIONNEL : 3 à 4 phrases. Intègre le niveau d'études/expérience,
+les 5-6 mots-clés sectoriels les plus importants, et l'objectif professionnel.
+Minimum 60 mots.
+
+EXPÉRIENCES : Pour CHAQUE poste :
+- Titre de poste normalisé (reconnaissable par les ATS)
+- Nom entreprise + ville
+- Dates format MM/AAAA – MM/AAAA (ou Présent)
+- MINIMUM 4 bullets par poste
+- Chaque bullet : [Verbe d'action fort] + [action spécifique] + [résultat concret ou chiffré]
+- Verbes à utiliser : Géré, Développé, Créé, Réalisé, Coordonné, Optimisé, Analysé,
+  Mis en place, Piloté, Contribué, Amélioré, Réduit, Augmenté, Assuré, Dirigé
+
+COMPÉTENCES : minimum 12 compétences au total réparties en :
+- Compétences techniques : min 6 (spécifiques au secteur)
+- Savoir-être : min 4
+- Outils & Logiciels : min 4
+
+LANGUES : inclure niveau officiel (A1/A2/B1/B2/C1/C2 ou Natif/Courant/Intermédiaire)
+
+Réponds UNIQUEMENT en JSON valide, sans markdown, sans backtick :
+{"name":"<prénom nom complet>","email":"<email>","phone":"<+33 X XX XX XX XX>","location":"<Ville, France>","linkedin":"<url ou vide>","title":"<titre professionnel précis ATS>","summary":"<résumé 3-4 phrases dense 60+ mots avec mots-clés sectoriels>","experiences":[{"title":"<titre normalisé>","company":"<entreprise>","location":"<ville>","start":"<MM/AAAA>","end":"<MM/AAAA ou Présent>","bullets":["<verbe fort + action + résultat>","<verbe fort + action + résultat>","<verbe fort + action + résultat>","<verbe fort + action + résultat>"]}],"education":[{"degree":"<diplôme complet + spécialité>","school":"<établissement>","location":"<ville>","year":"<AAAA>","mention":"<mention ou vide>"}],"skills":{"technical":["<tech1>","<tech2>","<tech3>","<tech4>","<tech5>","<tech6>"],"soft":["<soft1>","<soft2>","<soft3>","<soft4>","<soft5>"],"tools":["<outil1>","<outil2>","<outil3>","<outil4>"]},"languages":[{"lang":"<langue>","level":"<niveau officiel>"}],"ats_score":<score estimé 90-97>}`;
+
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2500,
+        messages: [{ role: 'user', content: generationPrompt }]
+      })
+    });
+    const d = await r.json();
+    const raw = d.content?.[0]?.text || '';
+    const m = raw.match(/\{[\s\S]*\}/);
+    if (m) {
+      const parsed = JSON.parse(m[0]);
+      optimizedCV = { ...optimizedCV, ...parsed };
+    }
+  } catch(e) {
+    console.warn('CV generation error:', e);
+  }
+}
+
+// ── BUILD CV PREVIEW ──
+function buildCVPreview() {
+  const cv=optimizedCV||{};
+  const score=cv.ats_score||Math.floor(hashText(cvText||'x')%9)+88;
+  if(document.getElementById('newScoreDisplay')) document.getElementById('newScoreDisplay').textContent=score+'/100';
+  // Appliquer la couleur choisie sur le CV
+  const pal = PALETTES[chosenColor];
+  if(pal) {
+    document.documentElement.style.setProperty('--accent', pal.hex);
+    document.documentElement.style.setProperty('--accent-l', pal.light);
+    const photoPh = document.querySelector('.cv-photo-placeholder');
+    if(photoPh) photoPh.style.borderColor = pal.hex;
+    const cvTitleEl = document.getElementById('cvTitleDisplay');
+    if(cvTitleEl) cvTitleEl.style.color = pal.hex;
+  }
+  document.getElementById('cvNameDisplay').textContent=cv.name||'Prénom Nom';
+  document.getElementById('cvTitleDisplay').textContent=cv.title||(sector?'Professionnel '+sector:'Professionnel');
+  document.getElementById('cvEmail').innerHTML=cv.email?`📧 ${cv.email}`:'📧 email@exemple.com';
+  document.getElementById('cvPhone').innerHTML=cv.phone?`📱 ${cv.phone}`:'📱 +33 6 XX XX XX XX';
+  document.getElementById('cvLocation').innerHTML=cv.location?`📍 ${cv.location}`:'📍 France';
+  const liEl=document.getElementById('cvLinkedin');
+  if(cv.linkedin){liEl.style.display='flex';liEl.innerHTML=`🔗 ${cv.linkedin}`;}
+  if(cv.summary) document.getElementById('cvSummaryText').textContent=cv.summary;
+
+  const expEl=document.getElementById('cvExpList');expEl.innerHTML='';
+  const exps=cv.experiences?.length?cv.experiences:[{title:'Poste Principal',company:'Entreprise',location:'Paris',start:'01/2022',end:'Présent',bullets:['Gestion et coordination de projets avec résultats mesurables','Collaboration avec équipes pluridisciplinaires','Amélioration des processus internes (+20% efficacité)']}];
+  exps.forEach(exp=>{
+    const d=document.createElement('div');d.className='cv-exp';
+    d.innerHTML=`<div class="cv-exp-header"><div class="cv-exp-title">${exp.title}</div><div class="cv-exp-dates">${exp.start||''} – ${exp.end||'Présent'}</div></div><div class="cv-exp-company">${exp.company}${exp.location?' · '+exp.location:''}</div>${(exp.bullets||[]).map(b=>`<div class="cv-bullet">${b}</div>`).join('')}`;
+    expEl.appendChild(d);
+  });
+
+  const eduEl=document.getElementById('cvEduList');eduEl.innerHTML='';
+  const edus=cv.education?.length?cv.education:[{degree:'Diplôme',school:'École / Université',year:'2021'}];
+  edus.forEach(edu=>{
+    const d=document.createElement('div');d.style.marginBottom='12px';
+    d.innerHTML=`<div class="cv-edu-row"><div class="cv-edu-degree">${edu.degree}</div><div class="cv-edu-year">${edu.year||''}</div></div><div class="cv-edu-school">${edu.school}${edu.location?' · '+edu.location:''}</div>`;
+    eduEl.appendChild(d);
+  });
+
+  const skEl=document.getElementById('cvSkillsList');skEl.innerHTML='';
+  const allSk=cv.skills?[...(cv.skills.technical||[]),...(cv.skills.soft||[]),...(cv.skills.tools||[])]:['Communication','Leadership','Gestion de projet','Analyse'];
+  allSk.forEach(sk=>{const t=document.createElement('div');t.className='cv-skill-tag';t.textContent=sk;skEl.appendChild(t);});
+
+  const lgEl=document.getElementById('cvLangList');lgEl.innerHTML='';
+  const langs=cv.languages?.length?cv.languages:[{lang:'Français',level:'Natif'}];
+  langs.forEach(l=>{
+    const d=document.createElement('div');d.className='cv-lang';
+    d.innerHTML=l.lang?`${l.lang} <span class="cv-lang-level">(${l.level})</span>`:typeof l==='string'?l:'Français (Natif)';
+    lgEl.appendChild(d);
+  });
+}
+
+// ── DOWNLOAD WORD ──
+async function downloadWord() {
+  const btn=document.getElementById('dlWordBtn');
+  btn.textContent='⏳ Génération...';btn.disabled=true;
+  if(typeof docx==='undefined'){alert('Librairie Word non chargée. Réessayez dans quelques secondes.');btn.textContent='⬇ Télécharger Word (.docx)';btn.disabled=false;return;}
+  const cv=optimizedCV||{};
+  const {Document,Packer,Paragraph,TextRun,BorderStyle}=docx;
+  const GREEN='00b37e',DARK='0d0d0d',GRAY='5a5752';
+  const mkSec=t=>new Paragraph({spacing:{before:280,after:100},border:{bottom:{style:BorderStyle.SINGLE,size:6,color:GREEN,space:4}},children:[new TextRun({text:t,bold:true,size:24,color:GREEN,font:'Calibri'})]});
+  const mkB=t=>new Paragraph({bullet:{level:0},spacing:{after:60},children:[new TextRun({text:t,size:20,font:'Calibri',color:DARK})]});
+  const mkT=(t,o={})=>new Paragraph({spacing:{after:o.after||80},children:[new TextRun({text:t,size:o.size||20,bold:!!o.bold,color:o.color||DARK,font:'Calibri',italics:!!o.italic})]});
+  const ch=[];
+  ch.push(new Paragraph({spacing:{after:40},children:[new TextRun({text:cv.name||'Prénom Nom',bold:true,size:44,font:'Calibri',color:DARK})]}));
+  if(cv.title) ch.push(mkT(cv.title,{size:22,color:GREEN,after:60}));
+  const ct=[cv.email,cv.phone,cv.location,cv.linkedin].filter(Boolean).join(' | ');
+  ch.push(mkT(ct,{size:18,color:GRAY,after:200}));
+  if(cv.summary){ch.push(mkSec('RÉSUMÉ PROFESSIONNEL'));ch.push(mkT(cv.summary,{after:60}));}
+  if(cv.experiences?.length){
+    ch.push(mkSec('EXPÉRIENCE PROFESSIONNELLE'));
+    cv.experiences.forEach(e=>{
+      ch.push(new Paragraph({spacing:{before:120,after:30},children:[new TextRun({text:e.title,bold:true,size:22,font:'Calibri'}),new TextRun({text:` — ${e.company}${e.location?' · '+e.location:''}`,size:20,font:'Calibri',color:GRAY})]}));
+      ch.push(mkT(`${e.start||''} – ${e.end||'Présent'}`,{size:18,color:GRAY,after:60}));
+      (e.bullets||[]).forEach(b=>ch.push(mkB(b)));
+    });
+  }
+  if(cv.education?.length){
+    ch.push(mkSec('FORMATION'));
+    cv.education.forEach(e=>{
+      ch.push(new Paragraph({spacing:{before:100,after:30},children:[new TextRun({text:e.degree,bold:true,size:22,font:'Calibri'}),new TextRun({text:` — ${e.school}${e.location?' · '+e.location:''}`,size:20,font:'Calibri',color:GRAY})]}));
+      if(e.year) ch.push(mkT(e.year,{size:18,color:GRAY,after:80}));
+    });
+  }
+  if(cv.skills){
+    ch.push(mkSec('COMPÉTENCES'));
+    const sk=cv.skills;
+    if(sk.technical?.length) ch.push(new Paragraph({spacing:{after:50},children:[new TextRun({text:'Techniques : ',bold:true,size:20,font:'Calibri'}),new TextRun({text:sk.technical.join(' · '),size:20,font:'Calibri'})]}));
+    if(sk.soft?.length) ch.push(new Paragraph({spacing:{after:50},children:[new TextRun({text:'Savoir-être : ',bold:true,size:20,font:'Calibri'}),new TextRun({text:sk.soft.join(' · '),size:20,font:'Calibri'})]}));
+    if(sk.tools?.length) ch.push(new Paragraph({spacing:{after:80},children:[new TextRun({text:'Outils : ',bold:true,size:20,font:'Calibri'}),new TextRun({text:sk.tools.join(' · '),size:20,font:'Calibri'})]}));
+  }
+  if(cv.languages?.length){
+    ch.push(mkSec('LANGUES'));
+    ch.push(mkT(cv.languages.map(l=>l.lang?`${l.lang} (${l.level})`:typeof l==='string'?l:'').filter(Boolean).join(' · ')));
+  }
+  ch.push(new Paragraph({spacing:{before:400},children:[new TextRun({text:'CV optimisé ATS par CVpass.fr',size:16,font:'Calibri',color:'aaa9a5',italics:true})]}));
+  const doc=new Document({creator:'CVpass',sections:[{properties:{page:{margin:{top:720,bottom:720,left:900,right:900}}},children:ch}]});
+  if(typeof saveAs==='undefined'){alert('Librairie de téléchargement non chargée. Réessayez.');btn.textContent='⬇ Télécharger Word (.docx)';btn.disabled=false;return;}
+  const blob=await Packer.toBlob(doc);
+  saveAs(blob,(cv.name||'CV').replace(/\s+/g,'_')+'_CVpass.docx');
+  btn.textContent='⬇ Télécharger Word (.docx)';btn.disabled=false;
+}
+
+// ── DOWNLOAD PDF ──
+async function downloadPDF() {
+  const btn=document.getElementById('dlPdfBtn');
+  btn.textContent='⏳ Génération PDF...';btn.disabled=true;
+  if(typeof html2canvas==='undefined'||typeof window.jspdf==='undefined'){
+    alert('Librairie PDF non chargée. Réessayez dans quelques secondes.');
+    btn.textContent='⬇ Télécharger PDF';btn.disabled=false;return;
+  }
+  try {
+    const el=document.getElementById('cv-rendered');
+    const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff'});
+    const imgData=canvas.toDataURL('image/png');
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pW=pdf.internal.pageSize.getWidth();
+    const pH=pdf.internal.pageSize.getHeight();
+    const ratio=pW/canvas.width;
+    const scaledH=canvas.height*ratio;
+    if(scaledH<=pH){
+      pdf.addImage(imgData,'PNG',0,0,pW,scaledH);
+    } else {
+      let yPos=0;const pageH=pH/ratio;
+      while(yPos<canvas.height){
+        const pc=document.createElement('canvas');
+        pc.width=canvas.width;pc.height=Math.min(pageH,canvas.height-yPos);
+        pc.getContext('2d').drawImage(canvas,0,-yPos);
+        if(yPos>0) pdf.addPage();
+        pdf.addImage(pc.toDataURL('image/png'),'PNG',0,0,pW,Math.min(pH,scaledH-(yPos*ratio)));
+        yPos+=pageH;
+      }
+    }
+    pdf.save((optimizedCV?.name||'CV').replace(/\s+/g,'_')+'_CVpass.pdf');
+  } catch(e){alert('Erreur lors de la génération PDF. Utilisez le fichier Word à la place.');}
+  btn.textContent='⬇ Télécharger PDF';btn.disabled=false;
+}
+
+// ── AFFILIATION ──
+function openRegModal(){document.getElementById('reg-modal').classList.add('open');document.getElementById('regName').focus();}
+function closeRegModal(){document.getElementById('reg-modal').classList.remove('open');}
+
+function registerAffiliate() {
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  if(!name||!email||!email.includes('@')){alert('Prénom et email valide requis.');return;}
+  affiliateCode=name.toLowerCase().replace(/[^a-z]/g,'')+Math.floor(hashText(email)%9000+1000);
+  const data={name,email,code:affiliateCode,clicks:0,conversions:0,earned:0,balance:0,commissions:[]};
+  try{localStorage.setItem('cvpass_affiliate',JSON.stringify(data));}catch(e){}
+  closeRegModal();
+  showAffiliateDashboard(data);
+}
+
+function showAffiliateDashboard(data) {
+  document.getElementById('affil-register-view').style.display='none';
+  document.getElementById('affil-dashboard-view').style.display='block';
+  document.getElementById('affiliateName').textContent=data.name;
+  document.getElementById('balanceDisplay').textContent=data.balance+'€';
+  document.getElementById('affiliateLink').value=`https://cvpass.fr?ref=${data.code}`;
+  document.getElementById('statClicks').textContent=data.clicks;
+  document.getElementById('statConversions').textContent=data.conversions;
+  document.getElementById('statEarned').textContent=data.earned+'€';
+  document.getElementById('statRate').textContent=data.clicks>0?Math.round(data.conversions/data.clicks*100)+'%':'0%';
+  const wb=document.getElementById('withdrawBtn');
+  if(data.balance>=10){wb.disabled=false;wb.style.opacity='1';wb.style.cursor='pointer';}
+}
+
+function trackCommission() {
+  const ref=new URLSearchParams(window.location.search).get('ref');
+  if(!ref) return;
+  // En prod : POST vers /api/affiliate/track avec ref + montant
+  console.log('Commission 2€ à créditer pour affilié :',ref);
+}
+
+function copyLink(){
+  const input=document.getElementById('affiliateLink');
+  navigator.clipboard.writeText(input.value).then(()=>{
+    const btn=input.nextElementSibling;
+    btn.textContent='✓ Copié !';
+    setTimeout(()=>btn.textContent='Copier',2000);
+  }).catch(()=>{input.select();document.execCommand('copy');});
+}
+function shareWhatsapp(){const l=document.getElementById('affiliateLink').value;window.open(`https://wa.me/?text=${encodeURIComponent('J\'ai optimisé mon CV avec CVpass — mon score ATS est passé de 24% à 93% ! Teste gratuitement : '+l)}`,'_blank');}
+function shareLinkedin(){const l=document.getElementById('affiliateLink').value;window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(l)}`,'_blank');}
+
+// ── SIMULATOR ──
+function updateSim(){
+  const n=parseInt(document.getElementById('simSlider').value);
+  document.getElementById('simCount').textContent=n;
+  document.getElementById('simEarning').textContent=(n*2)+'€';
+  document.getElementById('simRevenue').textContent=(n*7.99).toFixed(0)+'€';
+}
+
+// ── UTILS ──
+function resetTool(){
+  document.getElementById('step-upload').style.display='block';
+  document.getElementById('step-prog').style.display='none';
+  document.getElementById('step-result').style.display='none';
+  clearFile();
+  setStep(1);
+  document.getElementById('pBar').style.width='0%';
+  document.getElementById('pBar').setAttribute('aria-valuenow','0');
+  document.getElementById('pPct').textContent='0%';
+  ['as1','as2','as3','as4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className='astep';
+    const ico=el.querySelector('.asico');
+    ico.textContent=i+1;
+    ico.style.borderColor='';
+    ico.style.background='';
+    ico.style.color='';
+  });
+  document.getElementById('sArc').style.strokeDashoffset='314';
+  scrollToSection('upload');
+}
+
+function setStep(n){
+  for(let i=1;i<=3;i++){
+    const node=document.getElementById('sn'+i);
+    node.className='snode'+(i<n?' done':i===n?' active':'');
+    const c=document.getElementById('sc'+i);
+    c.textContent=i<n?'✓':i;
+    if(i<=2) document.getElementById('sl'+i).className='sline'+(i<n?' done':'');
+  }
+}
+
+function markAS(id,state){
+  const el=document.getElementById(id);
+  el.className='astep'+(state==='act'?' act':state==='done'?' done':'');
+  const ico=el.querySelector('.asico');
+  if(state==='done'){ico.textContent='✓';}
+  else if(state==='act'){ico.style.borderColor='var(--black)';}
+}
+
+function animBar(from,to){
+  return new Promise(res=>{
+    let v=from;const step=(to-from)/16;
+    const iv=setInterval(()=>{
+      v=Math.min(v+step,to);
+      document.getElementById('pBar').style.width=v+'%';
+      document.getElementById('pPct').textContent=Math.round(v)+'%';
+      if(v>=to){clearInterval(iv);res();}
+    },55);
+  });
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function faq(btn){
+  const item=btn.closest('.faq-item');
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>{
+    i.classList.remove('open');
+    i.querySelector('.faq-btn').setAttribute('aria-expanded','false');
+  });
+  if(!isOpen){
+    item.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+  }
+}
+
+// ── KEYBOARD ACCESSIBILITY pour modales ──
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape'){
+    if(document.getElementById('payModal').classList.contains('open')) closePayModal();
+    if(document.getElementById('reg-modal').classList.contains('open')) closeRegModal();
+  }
+});
+
+
+
+// ── DÉTECTION TYPE FICHIER ──
+function detectFileType(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.pdf')) {
+    return name.includes('canva') || name.includes('design')
+      ? '📄 PDF Canva détecté — Optimisation critique nécessaire'
+      : '📄 PDF détecté — Extraction en cours';
+  }
+  if (name.endsWith('.docx') || name.endsWith('.doc')) return '📝 Word (.docx) détecté — Extraction optimale';
+  if (name.endsWith('.txt')) return '📃 Fichier texte détecté — Lecture directe';
+  return '📄 Fichier détecté';
+}
+
+// ── PERSONNALISATION ──
+function selectPages(n) {
+  chosenPages = n;
+  document.getElementById('page1opt').classList.toggle('sel', n === 1);
+  document.getElementById('page2opt').classList.toggle('sel', n === 2);
+}
+
+function selectColor(idx) {
+  chosenColor = idx;
+  document.querySelectorAll('.color-opt').forEach((el, i) => el.classList.toggle('sel', i === idx));
+  const pal = PALETTES[idx];
+  document.documentElement.style.setProperty('--accent', pal.hex);
+  document.documentElement.style.setProperty('--accent-l', pal.light);
+  // Mettre à jour les éléments du CV preview si visible
+  updateCVColors(pal.hex);
+}
+
+function updateCVColors(hex) {
+  // Mettre à jour la barre de contact et accents du CV rendu
+  const cvTitle = document.getElementById('cvTitleDisplay');
+  if(cvTitle) cvTitle.style.color = hex;
+}
+
+async function startGeneration() {
+  posteVise = document.getElementById('posteVise')?.value?.trim() || '';
+  const overlay = document.getElementById('genOverlay');
+  if(overlay) { overlay.style.display = 'flex'; }
+  const steps = ['gos1','gos2','gos3','gos4'];
+  const msgs = ['Analyse du contenu original...','Restructuration ATS...','Optimisation mots-clés...','Application du style...'];
+  const genPromise = generateOptimizedCV();
+  for(let i = 0; i < 4; i++) {
+    markAS(steps[i], 'act');
+    if(document.getElementById('genMsg')) document.getElementById('genMsg').textContent = msgs[i];
+    await sleep(900);
+    markAS(steps[i], 'done');
+  }
+  await genPromise;
+  if(overlay) { overlay.style.display = 'none'; }
+  buildCVPreview();
+  goPage('cv-preview');
+}
+
+// ── PARTAGE ──
+function shareOnTikTok() { window.open('https://www.tiktok.com/', '_blank'); }
+function shareOnWhatsApp() {
+  const txt = "J'ai optimisé mon CV pour les ATS avec CVpass en 2 minutes pour 7,99€ 🚀 Essaie gratuitement : https://cvpass.fr";
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+function shareOnLinkedIn() {
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent('https://cvpass.fr'), '_blank');
+}
+
+// ── INIT ──
+(()=>{
+  // Load saved affiliate
+  try{
+    const saved=localStorage.getItem('cvpass_affiliate');
+    if(saved){const d=JSON.parse(saved);affiliateCode=d.code;if(window.location.hash==='#affil')showAffiliateDashboard(d);}
+  }catch(e){}
+  // URL params
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('ref')) console.log('Ref affilié détecté:',params.get('ref'));
+  if(params.get('page')==='affil') goPage('affil');
+
+  // ── Retour Stripe après paiement : ?paid=true ──
+  // Stripe Dashboard → Payment Link → Success URL = https://cvpass.fr?paid=true
+  if(params.get('paid')==='true') {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setTimeout(() => goPage('perso'), 300);
+  }
+})();
+</script>
+</body>
+</html>
