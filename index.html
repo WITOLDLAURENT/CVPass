@@ -611,7 +611,7 @@ h2.tool-h{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6r
             <span style="font-family:'DM Serif Display',serif;font-size:3rem;color:white;letter-spacing:-.03em">7,99€</span>
             <span style="color:rgba(255,255,255,.4);font-size:.85rem;margin-left:8px">paiement unique</span>
           </div>
-          <button class="btn btn-white btn-full" style="font-size:1rem;padding:15px" onclick="openPayModal()">
+          <button class="btn btn-white btn-full" style="font-size:1rem;padding:15px" onclick="goPay()">
             Voir mon CV professionnel →
           </button>
 
@@ -677,7 +677,7 @@ h2.tool-h{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6r
           <li style="font-size:.85rem;color:white;display:flex;align-items:center;gap:8px"><span style="color:var(--green);font-weight:700" aria-hidden="true">✓</span>Mots-clés sectoriels optimisés</li>
           <li style="font-size:.85rem;color:white;display:flex;align-items:center;gap:8px"><span style="color:var(--green);font-weight:700" aria-hidden="true">✓</span>Satisfait ou remboursé sous 7 jours</li>
         </ul>
-        <button class="btn btn-white btn-full" style="font-size:.95rem;padding:14px" onclick="openPayModal()">Voir mon CV professionnel →</button>
+        <button class="btn btn-white btn-full" style="font-size:.95rem;padding:14px" onclick="goPay()">Voir mon CV professionnel →</button>
         <p style="font-size:.68rem;color:rgba(255,255,255,.2);margin-top:12px">🔒 Paiement via Stripe · Sécurisé SSL</p>
       </div>
     </div>
@@ -742,7 +742,7 @@ h2.tool-h{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6r
       <p style="color:rgba(255,255,255,.45);margin-bottom:32px;max-width:460px;margin-left:auto;margin-right:auto;font-size:.9rem">Rejoins les candidats qui ont boosté leur taux de réponse avec CVpass.</p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
         <button class="btn btn-white" onclick="scrollToSection('upload')">Analyser gratuitement →</button>
-        <button class="btn btn-green" onclick="openPayModal()">Optimiser — 7,99€</button>
+        <button class="btn btn-green" onclick="goPay()">Optimiser — 7,99€</button>
       </div>
     </div>
   </section>
@@ -772,7 +772,29 @@ h2.tool-h{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6r
     </div>
 
     <!-- 1. Poste visé -->
-    <div class="perso-card">
+        <div class="perso-card">
+      <p style="font-weight:700;font-size:1rem;margin-bottom:5px">📄 Ton CV à optimiser</p>
+      <p style="font-size:.82rem;color:var(--g600);margin-bottom:12px" id="perso-cv-status">Importe ton CV pour que Claude extraie tes vraies informations.</p>
+      <div class="upload-box" style="padding:24px" onclick="document.getElementById('persoInput').click()">
+        <input type="file" id="persoInput" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="onPersoFile(event)">
+        <div id="perso-up-prompt">
+          <div style="font-size:1.8rem;margin-bottom:8px">📤</div>
+          <p style="font-weight:600;font-size:.9rem;margin-bottom:3px">Importe ton CV ici</p>
+          <p style="font-size:.78rem;color:var(--g400)">PDF ou Word — tes vraies infos seront extraites</p>
+        </div>
+        <div id="perso-up-ok" style="display:none;align-items:center;gap:10px">
+          <span style="font-size:1.5rem">✅</span>
+          <div style="text-align:left;flex:1">
+            <div style="font-weight:600;color:#065f46;font-size:.875rem" id="persoFileName">—</div>
+            <div style="font-size:.75rem;color:#059669">Prêt à être optimisé</div>
+          </div>
+          <button onclick="event.stopPropagation();clearPersoFile()" style="background:none;border:none;color:var(--g400);cursor:pointer">✕</button>
+        </div>
+      </div>
+      <p id="perso-error" style="display:none;font-size:.82rem;color:var(--red);margin-top:8px;font-weight:600">⚠ Importe ton CV avant de générer</p>
+    </div>
+
+<div class="perso-card">
       <p style="font-weight:700;font-size:1rem;margin-bottom:5px">1. Quel poste tu vises ?</p>
       <p style="font-size:.82rem;color:var(--gray-600);margin-bottom:12px">Claude intégrera les mots-clés spécifiques à ce poste dans ton CV — résultat bien meilleur qu'un CV générique.</p>
       <input type="text" id="posteVise" placeholder="Ex : Développeur Web, Chargée Marketing Digital, Alternance RH..." style="width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:var(--rs);font-size:.875rem;font-family:'Satoshi',sans-serif;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--black)'" onblur="this.style.borderColor='var(--gray-200)'">
@@ -891,7 +913,7 @@ h2.tool-h{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6r
           </div>
         </div>
         <!-- Photo placeholder — à remplir dans Word après téléchargement -->
-        <div class="cv-photo-placeholder" title="Emplacement photo professionnelle — à ajouter dans Word">
+        <div class="cv-photo-placeholder" id="cvPhotoPh" title="Emplacement photo professionnelle — à ajouter dans Word">
           <div class="photo-icon">📷</div>
           <div class="photo-text">Votre photo<br>professionnelle<br><span style="color:var(--green,#00845c);font-weight:700">ici</span></div>
         </div>
@@ -1078,7 +1100,7 @@ h2.tool-h{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6r
       <!-- BOUTON PAIEMENT DIRECT — aucun champ email, Stripe gère tout -->
       <!-- 
         INTÉGRATION STRIPE :
-        Remplace le onclick="doPayment()" par :
+        Remplace le onclick="goPay()" par :
         onclick="window.location.href='https://buy.stripe.com/TON_PAYMENT_LINK'"
         
         Et dans Stripe Dashboard → Payment Links → Success URL :
@@ -1086,7 +1108,7 @@ h2.tool-h{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3.5vw,2.6r
         
         Le site détecte automatiquement ?paid=true et redirige vers la page personnalisation.
       -->
-      <button id="payBtn" class="btn btn-black btn-full" style="font-size:1.05rem;padding:17px;margin-top:8px;border-radius:12px" onclick="doPayment()">
+      <button id="payBtn" class="btn btn-black btn-full" style="font-size:1.05rem;padding:17px;margin-top:8px;border-radius:12px" onclick="goPay()">
         🔒 Payer 7,99€ et personnaliser mon CV →
       </button>
 
@@ -1138,8 +1160,15 @@ window.addEventListener('load', () => {
   }
 });
 
+// ── CONFIG ──
+const STRIPE_URL = 'https://buy.stripe.com/8x2dRa07d7tVg20dHo5wI00';
+const CLAUDE_KEY = ''; // Clé gérée côté serveur via /api/claude
+const CLAUDE_API = '/api/claude'; // Proxy sécurisé Vercel
+
 // ── STATE ──
-let cvFile=null, cvText='', sector='', aiScore=null, aiResult=null, optimizedCV=null, affiliateCode='';
+let cvFile=null, cvText='', sector='';
+let persoFile=null, persoText='';
+let aiResult=null, optimizedCV=null, affiliateCode='';
 // ── PALETTES ──
 const PALETTES = [
   { name:'Bleu Marine',     hex:'#1B3A6B', hexPlain:'1B3A6B', light:'#EEF2F9', lightPlain:'EEF2F9' },
@@ -1378,9 +1407,9 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
     : `CV illisible (PDF image ou encodage complexe). JSON : {"score":${local},"structure":"Incompatible","keywords":"Insuffisants","issue_title":"Format PDF illisible par les ATS","issue_desc":"Ton PDF contient des éléments graphiques qui le rendent invisible pour les logiciels de recrutement. Les ATS ne peuvent extraire aucune information.","word_count":0,"name":"","email":"","phone":"","title":"","summary":"Professionnel dynamique avec expertise solide dans son domaine. Capacité avérée à gérer des projets complexes en équipe.","experiences":[],"education":[],"skills":["Communication","Gestion de projet","Analyse","Organisation"],"languages":["Français (Natif)","Anglais (Courant)"]}`;
 
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages',{
+    const r = await fetch(CLAUDE_API,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1400,messages:[{role:'user',content:prompt}]})
     });
     const d = await r.json();
@@ -1483,6 +1512,15 @@ function renderScore() {
 function setMC(id,val,cls){const el=document.getElementById(id);el.textContent=val;el.className='mc-v '+cls;}
 
 // ── PAYMENT ──
+// ── PAIEMENT STRIPE DIRECT ──
+function goPay() {
+  closePayModal();
+  const ref = new URLSearchParams(window.location.search).get('ref') || affiliateCode;
+  let url = STRIPE_URL;
+  if (ref) url += '?client_reference_id=' + encodeURIComponent(ref);
+  window.location.href = url;
+}
+
 function openPayModal() {
   const ref = new URLSearchParams(window.location.search).get('ref');
   if(ref) document.getElementById('refNote').style.display='block';
@@ -1531,13 +1569,15 @@ async function doPayment() {
   goPage('perso');
 }
 // ── GENERATE OPTIMIZED CV — produit un CV qui score 90-97/100 ──
-async function generateOptimizedCV() {
+async function generateCV(textContent) {
   const sNote = sector ? `Secteur cible : ${sector}.` : '';
+  // RÈGLE CRITIQUE : utiliser UNIQUEMENT les infos réelles du CV
+  const strictRule = 'RÈGLE ABSOLUE: NE JAMAIS inventer de nom, email, expérience ou diplôme. Extraire uniquement ce qui est dans le CV original.';
   const posteNote = (typeof posteVise !== 'undefined' && posteVise) ? `Poste visé par le candidat : "${posteVise}". Intègre les mots-clés spécifiques à ce poste dans le résumé et les compétences.` : '';
   const pagesNote = (typeof chosenPages !== 'undefined' && chosenPages === 1)
     ? 'CONTRAINTE ABSOLUE : CV sur 1 PAGE MAXIMUM. Priorise les infos les plus récentes et impactantes. Max 3 bullets par expérience. Résumé max 50 mots.'
     : 'CV sur 2 PAGES MAXIMUM. 4-5 bullets par expérience. Résumé 60-80 mots.';
-  const preview = cvText.substring(0,4000) || `Fichier CV : ${cvFile?.name}`;
+  const preview = (textContent || cvText).substring(0,4500) || `Fichier CV : ${cvFile?.name}`;
 
   const generationPrompt = `Tu es un expert en rédaction de CV et optimisation ATS avec 10 ans d'expérience en recrutement en France.
 Ta mission : transformer ce CV en un CV qui obtient 92-97/100 au scoring ATS.
@@ -1609,6 +1649,13 @@ Réponds UNIQUEMENT en JSON valide, sans markdown, sans backtick :
 
 // ── BUILD CV PREVIEW ──
 function buildCVPreview() {
+  // Réinitialiser les sections cachées
+  ['cvSumSec','cvSkillSec','cvLangSec'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
+  });
+  document.getElementById('cvLI').style.display = 'none';
+
   const cv=optimizedCV||{};
   const score=cv.ats_score||Math.floor(hashText(cvText||'x')%9)+88;
   if(document.getElementById('newScoreDisplay')) document.getElementById('newScoreDisplay').textContent=score+'/100';
@@ -1916,7 +1963,43 @@ function updateCVColors(hex) {
   if(cvTitle) cvTitle.style.color = hex;
 }
 
+
+// ══ UPLOAD PAGE PERSO ══
+function onPersoFile(e) {
+  const f = e.target.files[0]; if (!f) return;
+  persoFile = f; persoText = '';
+  document.getElementById('perso-up-prompt').style.display = 'none';
+  const ok = document.getElementById('perso-up-ok'); ok.style.display = 'flex';
+  document.getElementById('persoFileName').textContent = f.name;
+  document.getElementById('perso-error').style.display = 'none';
+}
+
+function clearPersoFile() {
+  persoFile = null; persoText = '';
+  document.getElementById('perso-up-prompt').style.display = 'block';
+  document.getElementById('perso-up-ok').style.display = 'none';
+  document.getElementById('persoInput').value = '';
+}
+
 async function startGeneration() {
+  // Vérifier qu'un CV est disponible
+  const hasPerso = persoFile !== null;
+  const hasPrev = cvText.trim().length > 60;
+  if (!hasPerso && !hasPrev) {
+    const errEl = document.getElementById('perso-error');
+    if (errEl) errEl.style.display = 'block';
+    return;
+  }
+  const errEl = document.getElementById('perso-error');
+  if (errEl) errEl.style.display = 'none';
+  posteVise = document.getElementById('posteVise')?.value?.trim() || '';
+  // Extraire le texte du nouveau fichier si uploadé
+  if (persoFile && persoText === '') {
+    persoText = await extractText(persoFile);
+  }
+  // Utiliser le meilleur texte disponible
+  const finalCVText = persoText.trim().length > 0 ? persoText : cvText;
+
   posteVise = document.getElementById('posteVise')?.value?.trim() || '';
   const overlay = document.getElementById('genOverlay');
   if(overlay) { overlay.style.display = 'flex'; }
@@ -1961,7 +2044,21 @@ function shareOnLinkedIn() {
   // Stripe Dashboard → Payment Link → Success URL = https://cvpass.fr?paid=true
   if(params.get('paid')==='true') {
     window.history.replaceState({}, document.title, window.location.pathname);
-    setTimeout(() => goPage('perso'), 300);
+    // Récupérer le CV de l'analyse gratuite si disponible
+    if (cvText && cvText.trim().length > 60) {
+      persoText = cvText;
+      setTimeout(() => {
+        const okEl = document.getElementById('perso-up-ok');
+        const promptEl = document.getElementById('perso-up-prompt');
+        const nameEl = document.getElementById('persoFileName');
+        const statusEl = document.getElementById('perso-cv-status');
+        if (okEl) okEl.style.display = 'flex';
+        if (promptEl) promptEl.style.display = 'none';
+        if (nameEl) nameEl.textContent = cvFile ? cvFile.name : 'CV de ton analyse';
+        if (statusEl) statusEl.textContent = 'CV récupéré de ton analyse ✅ — ou importe-en un autre.';
+      }, 300);
+    }
+    setTimeout(() => goPage('perso'), 200);
   }
 })();
 </script>
